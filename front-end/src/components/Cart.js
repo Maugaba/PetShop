@@ -10,7 +10,7 @@ const Cart = () => {
             <div className="offcanvas-body">
             <div className="order-md-last">
                 <h4 className="d-flex justify-content-between align-items-center mb-3">
-                <span className="text-primary">Your cart</span>
+                <span className="text-primary">Tú carrito</span>
                 <span className="badge bg-primary rounded-circle pt-2">3</span>
                 </h4>
                 <ul className="list-group mb-3">
@@ -41,7 +41,7 @@ const Cart = () => {
                 </li>
                 </ul>
 
-                <button className="w-100 btn btn-primary btn-lg" type="submit">Continue to checkout</button>
+                <button className="w-100 btn btn-primary btn-lg" type="submit">Continuar con el pago</button>
             </div>
             </div>
         </div>
