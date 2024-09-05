@@ -38,4 +38,8 @@ Route::prefix('coupons')->group(function () {
     Route::post('/change-status/{id}', 'App\Http\Controllers\CouponController@changeStatus')->name('coupons.change_status'); // Cambiar el estado de un cupón
 });
 
-
+//ROles
+route::prefix('roles')->group(function () {    
+    Route::get('/', 'App\Http\Controllers\RolesController@index')->name('roles.index');  // Obtener todos los roles    
+    Route::post('/', 'App\Http\Controllers\RolesController@store')->name('roles.store'); // Crear un nuevo rol  
+});
