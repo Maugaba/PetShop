@@ -8,9 +8,9 @@ const Footer = () => {
           <div className="row">
             <div className="col-md-3">
               <div className="footer-menu">
-                <img src="images/logo.png" alt="logo" />
-                <p className="blog-paragraph fs-6 mt-3">
-                  Subscribe to our newsletter to get updates about our grand offers.
+              <img src="/images/LogoV2.png" alt="logo" className="img-fluid" style={{ height: '10%', width: '80%' }} />
+              <p className="blog-paragraph fs-6 mt-3">
+                Suscríbete a nuestro boletín para recibir actualizaciones sobre nuestras grandes ofertas.
                 </p>
                 <div className="social-links">
                   <ul className="d-flex list-unstyled gap-2">
@@ -45,57 +45,57 @@ const Footer = () => {
             </div>
             <div className="col-md-3">
               <div className="footer-menu">
-                <h3>Quick Links</h3>
+                <h3>Enlaces rápidos</h3>
                 <ul className="menu-list list-unstyled">
                   <li className="menu-item">
-                    <a href="javascript;" className="nav-link">Home</a>
+                    <a href="javascript;" className="nav-link">Inicio</a>
                   </li>
                   <li className="menu-item">
-                    <a href="javascript;" className="nav-link">About us</a>
+                    <a href="javascript;" className="nav-link">Sobre nosotros</a>
                   </li>
                   <li className="menu-item">
-                    <a href="javascript;" className="nav-link">Offer</a>
+                    <a href="javascript;" className="nav-link">Ofrecer</a>
                   </li>
                   <li className="menu-item">
-                    <a href="javascript;" className="nav-link">Services</a>
+                    <a href="javascript;" className="nav-link">Servicios</a>
                   </li>
                   <li className="menu-item">
-                    <a href="javascript;" className="nav-link">Contact Us</a>
+                    <a href="javascript;" className="nav-link">Contáctenos</a>
                   </li>
                 </ul>
               </div>
             </div>
             <div className="col-md-3">
               <div className="footer-menu">
-                <h3>Help Center</h3>
+                <h3>Centro de ayuda</h3>
                 <ul className="menu-list list-unstyled">
                   <li className="menu-item">
-                    <a href="javascript;" className="nav-link">FAQs</a>
+                    <a href="javascript;" className="nav-link">Preguntas frecuentes</a>
                   </li>
                   <li className="menu-item">
-                    <a href="javascript;" className="nav-link">Payment</a>
+                    <a href="javascript;" className="nav-link">Pago</a>
                   </li>
                   <li className="menu-item">
-                    <a href="javascript;" className="nav-link">Returns & Refunds</a>
+                    <a href="javascript;" className="nav-link">Devoluciones y reembolsos</a>
                   </li>
                   <li className="menu-item">
-                    <a href="javascript;" className="nav-link">Checkout</a>
+                    <a href="javascript;" className="nav-link">Caja</a>
                   </li>
                   <li className="menu-item">
-                    <a href="javascript;" className="nav-link">Delivery Information</a>
+                    <a href="javascript;" className="nav-link">Información de entrega</a>
                   </li>
                 </ul>
               </div>
             </div>
             <div className="col-md-3">
               <div>
-                <h3>Our Newsletter</h3>
+                <h3>Nuestro Boletín</h3>
                 <p className="blog-paragraph fs-6">
-                  Subscribe to our newsletter to get updates about our grand offers.
+                  Suscríbete a nuestro boletín para recibir actualizaciones sobre nuestras grandes ofertas.
                 </p>
                 <div className="search-bar border rounded-pill border-dark-subtle px-2">
                   <form className="text-center d-flex align-items-center" action="" method="">
-                    <input type="text" className="form-control border-0 bg-transparent" placeholder="Enter your email here" />
+                    <input type="text" className="form-control border-0 bg-transparent" placeholder="Ingresa tu email aqui" />
                     <iconify-icon className="send-icon" icon="tabler:location-filled"></iconify-icon>
                   </form>
                 </div>
@@ -110,13 +110,7 @@ const Footer = () => {
           <hr className="m-0" />
           <div className="row mt-3">
             <div className="col-md-6 copyright">
-              <p className="secondary-font">© 2023 Waggy. All rights reserved.</p>
-            </div>
-            <div className="col-md-6 text-md-end">
-              <p className="secondary-font">
-                Free HTML Template by <a href="javascript;" target="_blank"
-                  className="text-decoration-underline fw-bold text-black-50"> TemplatesJungle</a>
-              </p>
+              <p className="secondary-font">© 2024 CMFMN. Todos los derechos reservados.</p>
             </div>
           </div>
         </div>
