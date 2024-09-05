@@ -14,43 +14,36 @@ class ProductController extends Controller
         return response()->json($products);
     }
 
-    // Mostrar un producto específico por su ID
-    public function show($id)
-    {
-        $product = Product::find($id);
-        if ($product) {
-            return response()->json($product);
-        } else {
-            return response()->json(['message' => 'Producto no encontrado'], 404);
-        }
-    }
-
     // Crear un nuevo producto
     public function store(Request $request)
-    {
-        $product = Product::create($request->all());
-        return response()->json($product, 201);
-    }
+{
+    // Validación de datos
+    $validatedData = $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'required|string',
+        'images' => 'nullable|string',
+        'videos' => 'nullable|string',
+        'specifications' => 'nullable|string',
+        'stock' => 'required|integer',
+        'price' => 'required|numeric',
+        'state' => 'required|integer|in:0,1',  // Verifica que state sea 0 o 1
+        'product_categorie_id' => 'required|exists:product_categories,id',
+    ]);
 
-    // Actualizar un producto existente
-    public function update(Request $request, $id)
+    // Crear el producto con los datos validados
+    $product = Product::create($validatedData);
+
+    return response()->json($product, 201);
+}
+    // Cambiar el estado de activo a inactivo
+    public function changeStatus($id)
     {
         $product = Product::find($id);
-        if ($product) {
-            $product->update($request->all());
-            return response()->json($product);
-        } else {
-            return response()->json(['message' => 'Producto no encontrado'], 404);
-        }
-    }
 
-    // Eliminar un producto
-    public function destroy($id)
-    {
-        $product = Product::find($id);
         if ($product) {
-            $product->delete();
-            return response()->json(['message' => 'Producto eliminado']);
+            $product->state = !$product->state; // Cambia el estado del producto (1 o 0)
+            $product->save();
+            return response()->json(['message' => 'Estado cambiado con éxito', 'product' => $product]);
         } else {
             return response()->json(['message' => 'Producto no encontrado'], 404);
         }

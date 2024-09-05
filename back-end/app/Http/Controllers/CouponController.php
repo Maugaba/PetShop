@@ -14,17 +14,6 @@ class CouponController extends Controller
         return response()->json($coupons);
     }
 
-    // Mostrar un cupón específico por su ID
-    public function show($id)
-    {
-        $coupon = Coupon::find($id);
-        if ($coupon) {
-            return response()->json($coupon);
-        } else {
-            return response()->json(['message' => 'Cupón no encontrado'], 404);
-        }
-    }
-
     // Crear un nuevo cupón
     public function store(Request $request)
     {
@@ -32,25 +21,15 @@ class CouponController extends Controller
         return response()->json($coupon, 201);
     }
 
-    // Actualizar un cupón existente
-    public function update(Request $request, $id)
+    // Cambiar el estado de activo/inactivo de un cupón
+    public function changeStatus($id)
     {
         $coupon = Coupon::find($id);
-        if ($coupon) {
-            $coupon->update($request->all());
-            return response()->json($coupon);
-        } else {
-            return response()->json(['message' => 'Cupón no encontrado'], 404);
-        }
-    }
 
-    // Eliminar un cupón
-    public function destroy($id)
-    {
-        $coupon = Coupon::find($id);
         if ($coupon) {
-            $coupon->delete();
-            return response()->json(['message' => 'Cupón eliminado']);
+            $coupon->active = !$coupon->active; // Cambia el estado del cupón
+            $coupon->save();
+            return response()->json(['message' => 'Estado del cupón cambiado con éxito', 'coupon' => $coupon]);
         } else {
             return response()->json(['message' => 'Cupón no encontrado'], 404);
         }

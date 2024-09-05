@@ -17,15 +17,14 @@ class Product extends Model
         'specifications', 
         'stock', 
         'price', 
+        'state',  // Asegúrate de incluir el campo de estado
         'status', 
-        'product_category_id'
+        'product_categorie_id'
     ];
 
     // Relación con la categoría de producto
     public function category()
     {
-        return $this->belongsTo(ProductCategory::class, 'product_category_id');
+        return $this->belongsTo(ProductCategory::class, 'product_categorie_id');
     }
-
-    // Definir cualquier otra relación que pueda existir, por ejemplo, con 'orders' o 'carts'
 }

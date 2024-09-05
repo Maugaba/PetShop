@@ -16,33 +16,26 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/logout', 'App\Http\Controllers\loginController@logout')->name('logout');
         Route::post('/register', 'App\Http\Controllers\loginController@user_register')->name('user.register');
     });
-
-    //Products
-    Route::prefix('products')->group(function () {
-        Route::get('/', [ProductController::class, 'index'])->name('products.index');
-        Route::get('/{id}', [ProductController::class, 'show'])->name('products.show');
-        Route::post('/', [ProductController::class, 'store'])->name('products.store');
-        Route::put('/{id}', [ProductController::class, 'update'])->name('products.update');
-        Route::delete('/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
-    });
-    //Categories
-    Route::prefix('categories')->group(function () {
-        Route::get('/', [ProductCategoryController::class, 'index'])->name('categories.index');
-        Route::get('/{id}', [ProductCategoryController::class, 'show'])->name('categories.show');
-        Route::post('/', [ProductCategoryController::class, 'store'])->name('categories.store');
-        Route::put('/{id}', [ProductCategoryController::class, 'update'])->name('categories.update');
-        Route::delete('/{id}', [ProductCategoryController::class, 'destroy'])->name('categories.destroy');
-    });
-
-    //Coupons
-    Route::prefix('coupons')->group(function () {
-        Route::get('/', [CouponController::class, 'index'])->name('coupons.index');
-        Route::get('/{id}', [CouponController::class, 'show'])->name('coupons.show');
-        Route::post('/', [CouponController::class, 'store'])->name('coupons.store');
-        Route::put('/{id}', [CouponController::class, 'update'])->name('coupons.update');
-        Route::delete('/{id}', [CouponController::class, 'destroy'])->name('coupons.destroy');
-    });
     
+});
+
+//Products
+Route::prefix('products')->group(function () {
+    Route::get('/', 'App\Http\Controllers\ProductController@index')->name('products.index');  // Obtener todos los productos
+    Route::post('/', 'App\Http\Controllers\ProductController@store')->name('products.store'); // Crear un nuevo producto
+    Route::post('/change-status/{id}', 'App\Http\Controllers\ProductController@changeStatus')->name('products.change_status'); // Cambiar el estado de un producto
+});
+//Categories
+Route::prefix('categories')->group(function () {
+    Route::get('/', 'App\Http\Controllers\ProductCategoryController@index')->name('categories.index'); // Obtener todas las categorías
+    Route::post('/', 'App\Http\Controllers\ProductCategoryController@store')->name('categories.store'); // Crear una nueva categoría
+});
+
+//Coupons
+Route::prefix('coupons')->group(function () {
+    Route::get('/', 'App\Http\Controllers\CouponController@index')->name('coupons.index'); // Obtener todos los cupones
+    Route::post('/', 'App\Http\Controllers\CouponController@store')->name('coupons.store'); // Crear un nuevo cupón
+    Route::post('/change-status/{id}', 'App\Http\Controllers\CouponController@changeStatus')->name('coupons.change_status'); // Cambiar el estado de un cupón
 });
 
 
