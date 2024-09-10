@@ -674,3 +674,14 @@ Single Product section style start
   color: var(--light-color);
   background-color: var(--accent-color);
 }
+
+.badge {
+  top: 40px; /* Ajusta según necesites */
+  right: -20px; /* Ajusta según necesites */
+  width: 20px; /* Ajusta el tamaño según necesites */
+  height: 20px; /* Ajusta el tamaño según necesites */
+  font-size: 12px; /* Ajusta el tamaño del texto según necesites */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

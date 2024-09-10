@@ -7,9 +7,6 @@ const Header = () => {
 
   return (
     <>
-      <div className="preloader-wrapper">
-        <div className="preloader"></div>
-      </div>
 
       <Cart />
 
@@ -55,7 +52,7 @@ const Header = () => {
             </div>
 
             <div className="col-sm-8 col-lg-4 d-flex justify-content-end gap-5 align-items-center mt-4 mt-sm-0 justify-content-center justify-content-sm-end">
-              <button className="btn btn-primary">Administrador</button>
+              <Link to="/administrator/dashboard"><button className="btn btn-primary">Administrador</button></Link>
             </div>
           </div>
         </div>
@@ -67,7 +64,7 @@ const Header = () => {
         <div className="container">
           <nav className="main-menu d-flex navbar navbar-expand-lg ">
 
-            <div className="d-flex d-lg-none align-items-end mt-3">
+            <div className="d-flex d-lg-none align-items-end mt-3 ">
               <ul className="d-flex justify-content-end list-unstyled m-0">
                 <li>
                   <a href="account.html" className="mx-3">
@@ -107,7 +104,7 @@ const Header = () => {
                 <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
               </div>
 
-              <div className="offcanvas-body justify-content-between">
+              <div className="offcanvas-body justify-content-between align-items-center">
                 <ul className="navbar-nav menu-list list-unstyled d-flex gap-md-3 mb-0" style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                   <li className="nav-item">
                     <Link to="/" className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}>Inicio</Link>
@@ -116,12 +113,12 @@ const Header = () => {
                     <Link to="/products/list" className={`nav-link ${location.pathname === '/products/list' ? 'active' : ''}`}>Productos</Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/contact" className={`nav-link ${location.pathname === '/contact' ? 'active' : ''}`}>Contactos</Link>
+                    <Link to="/contact" className={`nav-link ${location.pathname === '/contact' ? 'active' : ''}`}>Contáctanos</Link>
                   </li>
                 </ul>
 
                 <div className="d-none d-lg-flex align-items-end">
-                  <ul className="d-flex justify-content-end list-unstyled m-0">
+                  <ul className="d-flex justify-content-end list-unstyled m-0 align-items-center">
                     <li>
                       <a href="account.html" className="mx-3">
                         <iconify-icon icon="healthicons:person" className="fs-4"></iconify-icon>
@@ -133,7 +130,7 @@ const Header = () => {
                       </a>
                     </li>
 
-                    <li className="">
+                    <li style={{marginTop: '32px'}}>
                       <CartNumber />
                     </li>
                   </ul>

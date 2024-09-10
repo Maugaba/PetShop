@@ -17,8 +17,8 @@ class Product extends Model
         'specifications', 
         'stock', 
         'price', 
+        'discount',
         'state',  // Asegúrate de incluir el campo de estado
-        'status', 
         'product_categorie_id'
     ];
 

@@ -52,8 +52,7 @@ const Cart = () => {
 const CartNumber = () => {
     return (
         <>
-            <a href="javascript;" className="mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart"
-                aria-controls="offcanvasCart">
+            <a href="javascript;" className="mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
                 <iconify-icon icon="mdi:cart" className="fs-4 position-relative"></iconify-icon>
                 <span className="position-absolute translate-middle badge rounded-circle bg-primary pt-2">
                 03
