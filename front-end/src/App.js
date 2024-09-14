@@ -5,11 +5,12 @@ import ListProducts from './views/products/listProducts';
 import Footer from './components/Footer';
 import HeaderAdmin from './views/administrator/AdminHeader';
 import ListProductsAdmin from './views/products/listProductsAdmin';
+import { CartProvider } from './context/CartContext'; // Importa CartProvider
 
 // Componente para decidir cuál Header mostrar
 function HeaderSwitcher() {
   const location = useLocation();
-  console.log('Current Path:', location.pathname); // Confirmar ruta actual
+  console.log('Ruta actual:', location.pathname); // Confirmar ruta actual
 
   // Prueba simplificada
   if (location.pathname.startsWith('/administrator')) {
@@ -47,7 +48,9 @@ function App() {
 function AppWrapper() {
   return (
     <Router>
-      <App />
+      <CartProvider> 
+        <App />
+      </CartProvider>
     </Router>
   );
 }
