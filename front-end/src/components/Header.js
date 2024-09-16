@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Cart, { CartNumber } from './Cart';
 import { Link, useLocation } from 'react-router-dom';
-import { Icon } from '@iconify/react'; // Asegúrate de importar el componente de iconos
+import { Icon } from '@iconify/react'; 
 import apiUrl from '../api/apiUrl';
 
 const Header = () => {
@@ -11,7 +11,6 @@ const Header = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
-    // Fetch all products on component mount
     fetch(apiUrl + '/products')
       .then(response => response.json())
       .then(data => {
@@ -22,7 +21,7 @@ const Header = () => {
   }, []);
 
   const handleSearch = (event) => {
-    event.preventDefault(); // Evita el envío del formulario
+    event.preventDefault(); 
     const term = event.target.value;
     setSearchTerm(term);
     

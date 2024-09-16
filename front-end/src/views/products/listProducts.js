@@ -25,7 +25,7 @@ const ListProducts = () => {
   const [priceRange, setPriceRange] = useState('Todos');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [sortOrder, setSortOrder] = useState('');
-  const [error, setError] = useState(null); // Estado para manejar errores
+  const [error, setError] = useState(null); 
 
   const { addToCart } = useCart();
 
@@ -43,11 +43,11 @@ const ListProducts = () => {
     return (
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (selectedCategory ? product.product_categorie_id === parseInt(selectedCategory) : true) &&
-      (priceRange === "Menos de $10" ? product.price < 10 :
-       priceRange === "$10 - $20" ? product.price >= 10 && product.price <= 20 :
-       priceRange === "$20 - $30" ? product.price > 20 && product.price <= 30 :
-       priceRange === "$30 - $40" ? product.price > 30 && product.price <= 40 :
-       priceRange === "Mas de $40" ? product.price > 40 :
+      (priceRange === "Menos de Q10" ? product.price < 10 :
+       priceRange === "Q10 - Q20" ? product.price >= 10 && product.price <= 20 :
+       priceRange === "Q20 - Q30" ? product.price > 20 && product.price <= 30 :
+       priceRange === "Q30 - Q40" ? product.price > 30 && product.price <= 40 :
+       priceRange === "Mas de Q40" ? product.price > 40 :
        priceRange === "Todos" ? true : true)
     );
   });
@@ -91,16 +91,24 @@ const ListProducts = () => {
                 </select>
               </div>
             </div>
-
             <div className="product-grid row">
               {sortedProducts.map((product) => (
                 <div className="col-md-4 my-4" key={product.id}>
-                  <div className="card position-relative">
+                  <div 
+                    className="card position-relative" 
+                    style={{ height: '100%', width: '100%' }} 
+                  >
                     <Link to={`/product/${product.id}`}>
                       <img 
                         src={`http://localhost:8000/images/${product.images}`} 
-                        className="img-fluid rounded-4" 
+                        className="img-fluid" 
                         alt={product.name} 
+                        style={{ 
+                          width: '100%', 
+                          height: '300px', 
+                          objectFit: 'cover', 
+                          borderRadius: '0'   
+                        }} 
                       />
                     </Link>
                     <div className="card-body p-0">
@@ -108,7 +116,7 @@ const ListProducts = () => {
                         <h3 className="card-title pt-4 m-0">{product.name}</h3>
                       </Link>
                       <div className="card-text">
-                        <h3 className="secondary-font text-primary">${product.price}</h3>
+                        <h3 className="secondary-font text-primary">Q{product.price}</h3>
                         <div className="d-flex flex-wrap mt-3">
                           <button 
                             className="btn-cart me-3 px-4 pt-3 pb-3"
@@ -165,7 +173,7 @@ const ListProducts = () => {
               <div className="widget-price-filter pt-3">
                 <h4 className="widget-title">Filtrar por precio</h4>
                 <ul className="product-tags sidebar-list list-unstyled">
-                  {['Todos', 'Menos de $10', '$10 - $20', '$20 - $30', '$30 - $40', 'Mas de $40']
+                  {['Todos', 'Menos de Q10', 'Q10 - Q20', 'Q20 - Q30', 'Q30 - Q40', 'Mas de Q40']
                     .map((range) => (
                       <li className={`tags-item ${priceRange === range ? 'selected' : ''}`} key={range}>
                         <Link 

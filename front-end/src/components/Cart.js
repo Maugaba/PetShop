@@ -1,17 +1,12 @@
 import React from 'react';
-import { useCart } from '../context/CartContext'; // Asegúrate de importar el hook useCart
+import { useCart } from '../context/CartContext'; 
 
 const Cart = () => {
-  const { cart } = useCart(); // Obtener el carrito del contexto
+  const { cart } = useCart();
 
-  // Calcular el total y asegurar que sea un número
-  const total = cart.reduce((acc, item) => acc + (item.price || 0), 0);
+  const total = cart.reduce((acc, item) => acc + (parseFloat(item.price) || 0), 0);
 
-  console.log('Total:', total); // Debugging statement
-  console.log('Total Type:', typeof total); // Debugging statement
-
-  // Asegúrate de que total sea un número antes de usar toFixed
-  const formattedTotal = typeof total === 'number' ? total.toFixed(2) : '0.00';
+  const formattedTotal = total.toFixed(2);
 
   return (
     <>
@@ -30,14 +25,13 @@ const Cart = () => {
                 <li className="list-group-item d-flex justify-content-between lh-sm" key={index}>
                   <div>
                     <h6 className="my-0">{item.name}</h6>
-                    <small className="text-body-secondary">Brief description</small>
                   </div>
-                  <span className="text-body-secondary">${item.price}</span>
+                  <span className="text-body-secondary">Q{item.price}</span>
                 </li>
               ))}
               <li className="list-group-item d-flex justify-content-between">
-                <span className="fw-bold">Total (USD)</span>
-                <strong>${formattedTotal}</strong>
+                <span className="fw-bold">Total (Q)</span>
+                <strong>Q{formattedTotal}</strong>
               </li>
             </ul>
             <button className="w-100 btn btn-primary btn-lg" type="submit">Continuar con el pago</button>
@@ -49,11 +43,10 @@ const Cart = () => {
 }
 
 const CartNumber = () => {
-  const { cart } = useCart(); // Obtener el carrito del contexto
-
+  const { cart } = useCart(); 
   return (
     <>
-      <a href="javascript;" className="mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
+      <a href="none" className="mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart"> {/* deje esto como none solo para que no de advertencias*/}
         <iconify-icon icon="mdi:cart" className="fs-4 position-relative"></iconify-icon>
         <span className="position-absolute translate-middle badge rounded-circle bg-primary pt-2">
           {cart.length}
