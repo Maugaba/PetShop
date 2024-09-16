@@ -7,6 +7,11 @@ import HeaderAdmin from './views/administrator/AdminHeader';
 import ListProductsAdmin from './views/products/listProductsAdmin';
 import { CartProvider } from './context/CartContext'; // Importa CartProvider
 
+import ListCouponsAdmin from './views/coupons/listCouponsAdmin'; // Para listar cupones (administrador)
+import ListCategoriesAdmin from './views/categories/listCategoriesAdmin'; // Para listar categorías (administrador)
+
+
+
 // Componente para decidir cuál Header mostrar
 function HeaderSwitcher() {
   const location = useLocation();
@@ -37,6 +42,8 @@ function App() {
         <Route path="/products/list" element={<ListProducts />} />
         <Route path="/administrator/dashboard" element={<ListProducts />} />
         <Route path="/administrator/products" element={<ListProductsAdmin />} />
+        <Route path="/administrator/coupons" element={<ListCouponsAdmin />} />
+        <Route path="/administrator/products/category" element={<ListCategoriesAdmin />} />
         <Route path="*" element={<ErrorPage />} /> {/* Ruta para manejar errores 404 */}
       </Routes>
       

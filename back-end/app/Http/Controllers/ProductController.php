@@ -66,7 +66,7 @@ class ProductController extends Controller
         $product->discount = $request->discount;
         $product->stock = $request->stock;
         $product->state = 1; // Por defecto, el producto se crea activo
-        $product->product_categorie_id = $request->category;
+        $product->product_categorie_id = $request->product_categorie_id;
         $product->save();
 
         return response()->json($product, 201);
@@ -84,4 +84,58 @@ class ProductController extends Controller
             return response()->json(['message' => 'Producto no encontrado'], 404);
         }
     }
+
+     // Editar un producto existente
+     public function update(Request $request, $id)
+     {
+         $product = Product::find($id);
+ 
+         if ($product) {
+             $images = $request->file('images');
+             $videos = $request->file('videos');
+ 
+             $imageNames = [];
+             $videoNames = [];
+             $imagesConcatenated = '';
+             $videosConcatenated = '';
+ 
+             if ($images && is_array($images)) {
+                 foreach ($images as $image) {
+                     $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                     $image->move(public_path('images'), $imageName);
+                     $imageNames[] = $imageName;
+                 }
+                 $imagesConcatenated = implode(',', $imageNames);
+             }
+ 
+             if ($videos && is_array($videos)) {
+                 foreach ($videos as $video) {
+                     $videoName = time() . '_' . uniqid() . '.' . $video->getClientOriginalExtension();
+                     $video->move(public_path('videos'), $videoName);
+                     $videoNames[] = $videoName;
+                 }
+                 $videosConcatenated = implode(',', $videoNames);
+             }
+ 
+             $product->name = $request->name;
+             $product->description = $request->description;
+             if ($imagesConcatenated) {
+                 $product->images = $imagesConcatenated;
+             }
+             if ($videosConcatenated) {
+                 $product->videos = $videosConcatenated;
+             }
+             $product->specifications = $request->specifications;
+             $product->price = $request->price;
+             $product->discount = $request->discount;
+             $product->stock = $request->stock;
+             $product->product_categorie_id = $request->product_categorie_id; // Aseguramos que el campo sea correcto
+             $product->state = $request->state;
+             $product->save();
+ 
+             return response()->json($product, 200);
+         } else {
+             return response()->json(['message' => 'Producto no encontrado'], 404);
+         }
+     }
 }
