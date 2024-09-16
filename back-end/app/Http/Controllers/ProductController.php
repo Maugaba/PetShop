@@ -66,7 +66,7 @@ class ProductController extends Controller
         $product->discount = $request->discount;
         $product->stock = $request->stock;
         $product->state = 1; // Por defecto, el producto se crea activo
-        $product->product_categorie_id = $request->product_categorie_id;
+        $product->product_categorie_id = $request->category;
         $product->save();
 
         return response()->json($product, 201);

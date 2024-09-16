@@ -113,6 +113,18 @@ const AddProductModal = ({ show, handleClose, refreshProducts }) => {
     });
   };
 
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${apiUrl}/categories`)
+      .then(response => {
+        setCategories(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching categories:', error);
+      });
+  }, []); // El segundo argumento vacío [] asegura que useEffect se ejecute solo una vez al montar el componente
+
   return (
     <Modal show={show} onHide={handleClose} size="lg">
       <Modal.Header closeButton>
@@ -242,9 +254,11 @@ const AddProductModal = ({ show, handleClose, refreshProducts }) => {
                 <Form.Label>Categoría</Form.Label>
                 <Form.Control as="select" name="category" onChange={handleChange} required>
                   <option value="">Selecciona una categoría</option>
-                  <option value="1">Electrónica</option>
-                  <option value="2">Ropa</option>
-                  <option value="3">Hogar</option>
+                  {categories.map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.name}
+                    </option>
+                  ))}
                 </Form.Control>
               </Form.Group>
             </Col>
