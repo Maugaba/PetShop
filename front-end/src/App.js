@@ -5,26 +5,25 @@ import ListProducts from './views/products/listProducts';
 import Footer from './components/Footer';
 import HeaderAdmin from './views/administrator/AdminHeader';
 import ListProductsAdmin from './views/products/listProductsAdmin';
-import { CartProvider } from './context/CartContext'; // Importa CartProvider
+import { CartProvider } from './context/CartContext'; 
 
-import ListCouponsAdmin from './views/coupons/listCouponsAdmin'; // Para listar cupones (administrador)
-import ListCategoriesAdmin from './views/categories/listCategoriesAdmin'; // Para listar categorías (administrador)
+import ListCouponsAdmin from './views/coupons/listCouponsAdmin';
+import ListCategoriesAdmin from './views/categories/listCategoriesAdmin'; 
 
 
 
-// Componente para decidir cuál Header mostrar
+
 function HeaderSwitcher() {
   const location = useLocation();
-  console.log('Ruta actual:', location.pathname); // Confirmar ruta actual
+  console.log('Ruta actual:', location.pathname); 
 
-  // Prueba simplificada
+
   if (location.pathname.startsWith('/administrator')) {
     return <HeaderAdmin />;
   }
   return <Header />;
 }
 
-// Componente de error básico
 function ErrorPage() {
   return <h1>Page Not Found</h1>;
 }
@@ -44,7 +43,7 @@ function App() {
         <Route path="/administrator/products" element={<ListProductsAdmin />} />
         <Route path="/administrator/coupons" element={<ListCouponsAdmin />} />
         <Route path="/administrator/products/category" element={<ListCategoriesAdmin />} />
-        <Route path="*" element={<ErrorPage />} /> {/* Ruta para manejar errores 404 */}
+        <Route path="*" element={<ErrorPage />} /> 
       </Routes>
       
       <Footer />
