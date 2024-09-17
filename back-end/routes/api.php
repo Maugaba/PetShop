@@ -23,7 +23,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 Route::prefix('products')->group(function () {
     Route::get('/', 'App\Http\Controllers\ProductController@index')->name('products.index');  // Obtener todos los productos
     Route::post('/', 'App\Http\Controllers\ProductController@store')->name('products.store'); // Crear un nuevo producto
-    Route::put('/{id}', 'App\Http\Controllers\ProductController@update')->name('products.update'); // Actualizar un producto existente
+    Route::post('/{id}', 'App\Http\Controllers\ProductController@update')->name('products.update'); // Actualizar un producto existente
     Route::post('/change-status/{id}', 'App\Http\Controllers\ProductController@changeStatus')->name('products.change_status'); // Cambiar el estado de un producto
 });
 
@@ -31,7 +31,7 @@ Route::prefix('products')->group(function () {
 Route::prefix('categories')->group(function () {
     Route::get('/', 'App\Http\Controllers\ProductCategoryController@index')->name('categories.index'); // Obtener todas las categorías
     Route::post('/', 'App\Http\Controllers\ProductCategoryController@store')->name('categories.store'); // Crear una nueva categoría
-    Route::put('/{id}', 'App\Http\Controllers\ProductCategoryController@update')->name('categories.update'); // Actualizar una categoría existente
+    Route::post('/{id}', 'App\Http\Controllers\ProductCategoryController@update')->name('categories.update'); // Actualizar una categoría existente
     Route::post('/change-status/{id}', 'App\Http\Controllers\ProductCategoryController@changeStatus')->name('categories.change_status'); // Cambiar el estado de una categoría
 });
 
@@ -40,7 +40,7 @@ Route::prefix('coupons')->group(function () {
     Route::get('/', 'App\Http\Controllers\CouponController@index')->name('coupons.index'); // Obtener todos los cupones
     Route::post('/', 'App\Http\Controllers\CouponController@store')->name('coupons.store'); // Crear un nuevo cupón
     Route::post('/change-status/{id}', 'App\Http\Controllers\CouponController@changeStatus')->name('coupons.change_status'); // Cambiar el estado de un cupón
-    Route::put('/{id}', 'App\Http\Controllers\CouponController@update')->name('coupons.update'); // Actualizar un cupón existente
+    Route::post('/{id}', 'App\Http\Controllers\CouponController@update')->name('coupons.update'); // Actualizar un cupón existente
 });
 
 //ROles

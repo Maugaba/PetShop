@@ -129,8 +129,7 @@ class ProductController extends Controller
              $product->price = $request->price;
              $product->discount = $request->discount;
              $product->stock = $request->stock;
-             $product->product_categorie_id = $request->product_categorie_id; // Aseguramos que el campo sea correcto
-             $product->state = $request->state;
+             $product->product_categorie_id = $request->category; // Aseguramos que el campo sea correcto
              $product->save();
  
              return response()->json($product, 200);

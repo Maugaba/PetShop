@@ -25,7 +25,7 @@ const BannerSection = () => {
   );
 }
 
-const AddProductModal = ({ show, handleClose, refreshProducts }) => {
+const AddProductModal = ({ show, handleClose, refreshProducts, editingProduct, setEditingProduct }) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -37,6 +37,35 @@ const AddProductModal = ({ show, handleClose, refreshProducts }) => {
     discount: '',
     category: ''
   });
+
+  useEffect(() => {
+    if (editingProduct) {
+      console.log(editingProduct);
+      setFormData({
+        name: editingProduct.name,
+        description: editingProduct.description,
+        specifications: editingProduct.specifications,
+        stock: editingProduct.stock,
+        price: editingProduct.price,
+        discount: editingProduct.discount,
+        category: editingProduct.product_categorie_id,
+        images: [],
+        videos: []
+      });
+    } else {
+      setFormData({
+        name: '',
+        description: '',
+        specifications: '',
+        images: [],
+        videos: [],
+        stock: '',
+        price: '',
+        discount: '',
+        category: ''
+      });
+    }
+  }, [editingProduct]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -56,61 +85,59 @@ const AddProductModal = ({ show, handleClose, refreshProducts }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    Swal.fire({
-      title: '¿Estás seguro?',
-      text: "Estás a punto de crear un nuevo producto.",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, crear producto',
-      cancelButtonText: 'Cancelar'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const formDataSend = new FormData();
-        formDataSend.append('name', formData.name);
-        formDataSend.append('description', formData.description);
-        formDataSend.append('specifications', formData.specifications);
-        formDataSend.append('stock', formData.stock);
-        formDataSend.append('price', formData.price);
-        formDataSend.append('discount', formData.discount);
-        formDataSend.append('category', formData.category);
+    const formDataSend = new FormData();
+    formDataSend.append('name', formData.name);
+    formDataSend.append('description', formData.description);
+    formDataSend.append('specifications', formData.specifications);
+    formDataSend.append('stock', formData.stock);
+    formDataSend.append('price', formData.price);
+    formDataSend.append('discount', formData.discount);
+    formDataSend.append('category', formData.category);
 
-        if (formData.images.length > 0) {
-          formData.images.forEach((image) => {
-            formDataSend.append('images[]', image);
-          });
+    if (formData.images.length > 0) {
+      formData.images.forEach((image) => {
+        formDataSend.append('images[]', image);
+      });
+    }
+
+    if (formData.videos.length > 0) {
+      formData.videos.forEach((video) => {
+        formDataSend.append('videos[]', video);
+      });
+    }
+
+    if (editingProduct) {
+      // Actualizar producto existente
+      axios.post(`${apiUrl}/products/${editingProduct.id}`, formDataSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
         }
-
-        if (formData.videos.length > 0) {
-          formData.videos.forEach((video) => {
-            formDataSend.append('videos[]', video);
-          });
+      })
+      .then((response) => {
+        Swal.fire('Actualizado', 'El producto ha sido actualizado exitosamente.', 'success');
+        handleClose();
+        setEditingProduct(null);
+        refreshProducts();
+      })
+      .catch((error) => {
+        Swal.fire('Error', 'Hubo un problema al actualizar el producto: ' + error.message, 'error');
+      });
+    } else {
+      // Crear nuevo producto
+      axios.post(`${apiUrl}/products`, formDataSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
         }
-
-        axios.post(`${apiUrl}/products`, formDataSend, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        })
-        .then((response) => {
-          Swal.fire(
-            'Creado',
-            'El producto ha sido creado exitosamente.',
-            'success'
-          );
-          handleClose(); // Cierra el modal después de enviar
-          refreshProducts(); // Llama a la función para actualizar la lista de productos
-        })
-        .catch((error) => {
-          Swal.fire(
-            'Error',
-            'Hubo un problema al crear el producto: ' + error.message,
-            'error'
-          );
-        });
-      }
-    });
+      })
+      .then((response) => {
+        Swal.fire('Creado', 'El producto ha sido creado exitosamente.', 'success');
+        handleClose();
+        refreshProducts();
+      })
+      .catch((error) => {
+        Swal.fire('Error', 'Hubo un problema al crear el producto: ' + error.message, 'error');
+      });
+    }
   };
 
   const [categories, setCategories] = useState([]);
@@ -123,12 +150,12 @@ const AddProductModal = ({ show, handleClose, refreshProducts }) => {
       .catch(error => {
         console.error('Error fetching categories:', error);
       });
-  }, []); // El segundo argumento vacío [] asegura que useEffect se ejecute solo una vez al montar el componente
+  }, []);
 
   return (
     <Modal show={show} onHide={handleClose} size="lg">
       <Modal.Header closeButton>
-        <Modal.Title>Agregar Nuevo Producto</Modal.Title>
+        <Modal.Title>{editingProduct ? 'Editar Producto' : 'Agregar Nuevo Producto'}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form onSubmit={handleSubmit}>
@@ -252,7 +279,7 @@ const AddProductModal = ({ show, handleClose, refreshProducts }) => {
             <Col md={6}>
               <Form.Group controlId="formProductCategory">
                 <Form.Label>Categoría</Form.Label>
-                <Form.Control as="select" name="category" onChange={handleChange} required>
+                <Form.Control as="select" name="category" onChange={handleChange} value={formData.category || ''} required>
                   <option value="">Selecciona una categoría</option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
@@ -265,7 +292,7 @@ const AddProductModal = ({ show, handleClose, refreshProducts }) => {
           </Row>
           <br />
           <Button variant="primary" type="submit">
-            Guardar Producto
+            {editingProduct ? 'Actualizar Producto' : 'Guardar Producto'}
           </Button>
         </Form>
       </Modal.Body>
@@ -273,7 +300,7 @@ const AddProductModal = ({ show, handleClose, refreshProducts }) => {
   );
 };
 
-const handleDeactivate = (id) => {
+const handleDeactivate = (id, refreshProducts) => {
   Swal.fire({
     title: '¿Estás seguro?',
     text: '¿Deseas desactivar este producto?',
@@ -285,15 +312,14 @@ const handleDeactivate = (id) => {
     cancelButtonText: 'Cancelar'
   }).then((result) => {
     if (result.isConfirmed) {
-      console.log(`Producto con ID ${id} desactivado`);
-      // Ejemplo de solicitud DELETE (ajusta la URL según tu API):
-      // axios.delete(`/api/products/${id}`)
-      //   .then(response => {
-      //     Swal.fire('Desactivado', 'El producto ha sido desactivado.', 'success');
-      //   })
-      //   .catch(error => {
-      //     Swal.fire('Error', 'Hubo un problema al desactivar el producto.', 'error');
-      //   });
+      axios.post(`${apiUrl}/products/change-status/${id}`)
+        .then(response => {
+          Swal.fire('Desactivado', 'El producto ha sido desactivado.', 'success');
+          refreshProducts();
+        })
+        .catch(error => {
+          Swal.fire('Error', 'Hubo un problema al desactivar el producto.', 'error');
+        });
     }
   });
 };
@@ -301,9 +327,9 @@ const handleDeactivate = (id) => {
 const ListProductsAdmin = () => {
   const [products, setProducts] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
 
   useEffect(() => {
-    // Cargar productos al inicio
     fetchProducts();
   }, []);
 
@@ -317,7 +343,16 @@ const ListProductsAdmin = () => {
       });
   };
 
-  const handleShowModal = () => setShowModal(true);
+  const handleShowModal = () => {
+    setEditingProduct(null);
+    setShowModal(true);
+  };
+
+  const handleEditProduct = (product) => {
+    setEditingProduct(product);
+    setShowModal(true);
+  };
+
   const handleCloseModal = () => setShowModal(false);
 
   return (
@@ -336,14 +371,16 @@ const ListProductsAdmin = () => {
             { name: 'Stock', selector: row => row.stock, sortable: true },
             { name: 'Precio', selector: row => row.price, sortable: true },
             { name: 'Descuento', selector: row => row.discount, sortable: true },
+            { name: 'Categoría', selector: row => row.product_category, sortable: true },
+            { name: 'Estado', selector: row => row.state ? 'Activo' : 'Inactivo', sortable: true },
             {
               name: 'Acciones',
               cell: row => (
                 <div>
-                  <Button variant="link" onClick={() => handleDeactivate(row.id)}>
+                  <Button variant="link" onClick={() => handleDeactivate(row.id, fetchProducts)}>
                     <FontAwesomeIcon icon={faTrashAlt} />
                   </Button>
-                  <Button variant="link" className="ms-2">
+                  <Button variant="link" className="ms-2" onClick={() => handleEditProduct(row)}>
                     <FontAwesomeIcon icon={faEdit} />
                   </Button>
                 </div>
@@ -352,10 +389,20 @@ const ListProductsAdmin = () => {
           ]}
           data={products}
         />
-        <AddProductModal show={showModal} handleClose={handleCloseModal} refreshProducts={fetchProducts} />
+        <AddProductModal
+          show={showModal}
+          handleClose={handleCloseModal}
+          refreshProducts={fetchProducts}
+          editingProduct={editingProduct}
+          setEditingProduct={setEditingProduct}
+        />
       </div>
     </>
   );
 }
 
 export default ListProductsAdmin;
+
+
+
+
