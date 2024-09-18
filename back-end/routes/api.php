@@ -27,12 +27,12 @@ Route::prefix('products')->group(function () {
     Route::post('/change-status/{id}', 'App\Http\Controllers\ProductController@changeStatus')->name('products.change_status'); // Cambiar el estado de un producto
 });
 
-//Categories
+// categories
 Route::prefix('categories')->group(function () {
-    Route::get('/', 'App\Http\Controllers\ProductCategoryController@index')->name('categories.index'); // Obtener todas las categorías
-    Route::post('/', 'App\Http\Controllers\ProductCategoryController@store')->name('categories.store'); // Crear una nueva categoría
-    Route::post('/{id}', 'App\Http\Controllers\ProductCategoryController@update')->name('categories.update'); // Actualizar una categoría existente
-    Route::post('/change-status/{id}', 'App\Http\Controllers\ProductCategoryController@changeStatus')->name('categories.change_status'); // Cambiar el estado de una categoría
+    Route::get('/', 'App\Http\Controllers\ProductCategoryController@index')->name('categories.index');    
+    Route::post('/', 'App\Http\Controllers\ProductCategoryController@store')->name('categories.store');    
+    Route::put('/{id}', 'App\Http\Controllers\ProductCategoryController@update')->name('categories.update');
+    Route::post('/change-status/{id}', 'App\Http\Controllers\ProductCategoryController@changeStatus')->name('categories.change_status'); // Ruta para cambiar el estado
 });
 
 // Coupons

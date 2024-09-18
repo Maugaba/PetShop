@@ -11,7 +11,8 @@ class ProductCategory extends Model
     // Definir los campos que pueden ser asignados en masa
     protected $fillable = [
         'name', 
-        'description'
+        'description',
+        'state'
     ];
 
     // Relación con productos
