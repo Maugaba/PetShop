@@ -21,11 +21,12 @@ const BannerSection = () => {
 
 const ListProducts = () => {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);  // Estado para las categorías
   const [searchTerm, setSearchTerm] = useState('');
   const [priceRange, setPriceRange] = useState('Todos');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [sortOrder, setSortOrder] = useState('');
-  const [error, setError] = useState(null); 
+  const [error, setError] = useState(null);
 
   const { addToCart } = useCart();
 
@@ -39,8 +40,20 @@ const ListProducts = () => {
       });
   }, []);
 
+  
+  useEffect(() => {
+    fetch(apiUrl + '/categories/') 
+      .then(response => response.json())
+      .then(data => setCategories(data))
+      .catch(error => {
+        console.error('Error fetching categories:', error);
+        setError('Error al cargar las categorías');
+      });
+  }, []);
+
   const filteredProducts = products.filter(product => {
     return (
+      product.state === 1 &&
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (selectedCategory ? product.product_categorie_id === parseInt(selectedCategory) : true) &&
       (priceRange === "Menos de Q10" ? product.price < 10 :
@@ -108,7 +121,7 @@ const ListProducts = () => {
                           height: '300px', 
                           objectFit: 'cover', 
                           borderRadius: '0'   
-                        }} 
+                        }}onError={(e) => e.target.src = '/images/not-found.jpeg'} 
                       />
                     </Link>
                     <div className="card-body p-0">
@@ -155,18 +168,30 @@ const ListProducts = () => {
               <div className="widget-product-categories pt-5">
                 <h4 className="widget-title">Categorías</h4>
                 <ul className="product-categories sidebar-list list-unstyled">
-                  {[{ name: 'Todas', id: '' }, { name: 'Electrónica', id: 1 }, { name: 'Ropa', id: 2 }, { name: 'Hogar', id: 3 }]
-                    .map((cat) => (
-                      <li className={`cat-item ${selectedCategory === cat.id.toString() ? 'selected' : ''}`} key={cat.id}>
-                        <Link 
-                          to="#" 
-                          onClick={() => setSelectedCategory(cat.id.toString())} 
-                          style={{ textDecoration: selectedCategory === cat.id.toString() ? 'underline' : 'none' }}
-                        >
-                          {cat.name}
-                        </Link>
-                      </li>
-                    ))}
+                  {/* Mapear las categorías desde la API */}
+                  <li className={`cat-item ${selectedCategory === '' ? 'selected' : ''}`} key="">
+                    <Link 
+                      to="#" 
+                      onClick={() => setSelectedCategory('')} 
+                      style={{ textDecoration: selectedCategory === '' ? 'underline' : 'none' }}
+                    >
+                      Todas
+                    </Link>
+                  </li>
+                  {categories.map(category => (
+                    <li 
+                      className={`cat-item ${selectedCategory === category.id ? 'selected' : ''}`} 
+                      key={category.id}
+                    >
+                      <Link 
+                        to="#" 
+                        onClick={() => setSelectedCategory(category.id)}
+                        style={{ textDecoration: selectedCategory === category.id ? 'underline' : 'none' }}
+                      >
+                        {category.name}
+                      </Link>
+                    </li>
+                  ))}
                 </ul>
               </div>
 
@@ -193,6 +218,6 @@ const ListProducts = () => {
       </div>
     </div>
   );
-}
+};
 
 export default ListProducts;

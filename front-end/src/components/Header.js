@@ -168,6 +168,9 @@ const Header = () => {
                   <li className="nav-item">
                     <Link to="/contact" className={`nav-link ${location.pathname === '/contact' ? 'active' : ''}`}>Contáctanos</Link>
                   </li>
+                  <li className="nav-item">
+                    <Link to="/about" className={`nav-link ${location.pathname === '/about' ? 'active' : ''}`}>Acerca de Nosotros</Link>
+                  </li>
                 </ul>
 
                 <div className="d-none d-lg-flex align-items-end">

@@ -9,6 +9,8 @@ import { CartProvider } from './context/CartContext';
 
 import ListCouponsAdmin from './views/coupons/listCouponsAdmin';
 import ListCategoriesAdmin from './views/categories/listCategoriesAdmin'; 
+import AboutUs from './views/about/about';
+import ContactUs from './views/contact/contact';
 
 
 
@@ -43,6 +45,8 @@ function App() {
         <Route path="/administrator/products" element={<ListProductsAdmin />} />
         <Route path="/administrator/coupons" element={<ListCouponsAdmin />} />
         <Route path="/administrator/products/category" element={<ListCategoriesAdmin />} />
+        <Route path="/about" element={< AboutUs/>} />
+        <Route path="/contact" element={< ContactUs/>} />
         <Route path="*" element={<ErrorPage />} /> 
       </Routes>
       

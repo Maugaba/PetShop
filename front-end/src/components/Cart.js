@@ -2,9 +2,14 @@ import React from 'react';
 import { useCart } from '../context/CartContext'; 
 
 const Cart = () => {
-  const { cart } = useCart();
+  const { cart, updateQuantity } = useCart();
 
-  const total = cart.reduce((acc, item) => acc + (parseFloat(item.price) || 0), 0);
+  const total = cart.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity || 0), 0);
+
+  const handleQuantityChange = (e, productId) => {
+    const newQuantity = parseInt(e.target.value, 10);
+    updateQuantity(productId, newQuantity);
+  };
 
   const formattedTotal = total.toFixed(2);
 
@@ -25,8 +30,17 @@ const Cart = () => {
                 <li className="list-group-item d-flex justify-content-between lh-sm" key={index}>
                   <div>
                     <h6 className="my-0">{item.name}</h6>
+                    <small className="text-body-secondary">Cantidad: 
+                      <input 
+                        type="number" 
+                        value={item.quantity} 
+                        min="1"
+                        onChange={(e) => handleQuantityChange(e, item.id)} 
+                        style={{ width: '50px', marginLeft: '10px' }}
+                      />
+                    </small>
                   </div>
-                  <span className="text-body-secondary">Q{item.price}</span>
+                  <span className="text-body-secondary">Q{(item.price * item.quantity).toFixed(2)}</span>
                 </li>
               ))}
               <li className="list-group-item d-flex justify-content-between">
@@ -43,10 +57,10 @@ const Cart = () => {
 }
 
 const CartNumber = () => {
-  const { cart } = useCart(); 
+  const { cart } = useCart();
   return (
     <>
-      <a href="none" className="mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart"> {/* deje esto como none solo para que no de advertencias*/}
+      <a href="none" className="mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart"> 
         <iconify-icon icon="mdi:cart" className="fs-4 position-relative"></iconify-icon>
         <span className="position-absolute translate-middle badge rounded-circle bg-primary pt-2">
           {cart.length}
