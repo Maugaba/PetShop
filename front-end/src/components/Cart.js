@@ -5,7 +5,7 @@ const Cart = () => {
   const { cart, updateQuantity } = useCart();
 
   const total = cart.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity || 0), 0);
-
+  
   const handleQuantityChange = (e, productId) => {
     const newQuantity = parseInt(e.target.value, 10);
     updateQuantity(productId, newQuantity);
@@ -48,7 +48,18 @@ const Cart = () => {
                 <strong>Q{formattedTotal}</strong>
               </li>
             </ul>
-            <button className="w-100 btn btn-primary btn-lg" type="submit">Continuar con el pago</button>
+            
+            <form action="" method="">
+              {cart.map(item => (
+                <React.Fragment key={item.id}>
+                  <input type="hidden" name={`products[${item.id}][id]`} value={item.id} />
+                  <input type="hidden" name={`products[${item.id}][quantity]`} value={item.quantity} />
+                </React.Fragment>
+              ))}
+              <div className="d-grid">
+                <button className="w-100 btn btn-primary btn-lg" type="submit">Continuar con el pago</button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
