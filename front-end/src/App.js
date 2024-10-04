@@ -12,6 +12,8 @@ import ListCategoriesAdmin from './views/categories/listCategoriesAdmin';
 import AboutUs from './views/about/about';
 import ContactUs from './views/contact/contact';
 
+import Checkout from './views/checkout/checkout';
+
 
 
 
@@ -47,6 +49,7 @@ function App() {
         <Route path="/administrator/products/category" element={<ListCategoriesAdmin />} />
         <Route path="/about" element={< AboutUs/>} />
         <Route path="/contact" element={< ContactUs/>} />
+        <Route path="/checkout" element={<Checkout />} />
         <Route path="*" element={<ErrorPage />} /> 
       </Routes>
       

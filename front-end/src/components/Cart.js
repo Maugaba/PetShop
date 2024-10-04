@@ -1,14 +1,21 @@
 import React from 'react';
-import { useCart } from '../context/CartContext'; 
+import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 
 const Cart = () => {
   const { cart, updateQuantity } = useCart();
+  const navigate = useNavigate();
 
   const total = cart.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity || 0), 0);
   
   const handleQuantityChange = (e, productId) => {
     const newQuantity = parseInt(e.target.value, 10);
     updateQuantity(productId, newQuantity);
+  };
+
+  const handleCheckout = (e) => {
+    e.preventDefault();
+    navigate('/checkout', { state: { cart, total } }); // Redirige a la vista de checkout con estado
   };
 
   const formattedTotal = total.toFixed(2);
@@ -49,7 +56,7 @@ const Cart = () => {
               </li>
             </ul>
             
-            <form action="" method="">
+            <form onSubmit={handleCheckout}>
               {cart.map(item => (
                 <React.Fragment key={item.id}>
                   <input type="hidden" name={`products[${item.id}][id]`} value={item.id} />
@@ -57,7 +64,13 @@ const Cart = () => {
                 </React.Fragment>
               ))}
               <div className="d-grid">
-                <button className="w-100 btn btn-primary btn-lg" type="submit">Continuar con el pago</button>
+                <button 
+                  className="w-100 btn btn-primary btn-lg" 
+                  type="submit" 
+                  data-bs-dismiss="offcanvas" // Atributo que cierra el modal
+                >
+                  Continuar con el pago
+                </button>
               </div>
             </form>
           </div>
@@ -65,7 +78,7 @@ const Cart = () => {
       </div>
     </>
   );
-}
+};
 
 const CartNumber = () => {
   const { cart } = useCart();

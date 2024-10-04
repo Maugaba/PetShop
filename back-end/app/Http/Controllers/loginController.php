@@ -7,7 +7,7 @@ use App\Models\Usuarios;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Facades\Session;
 
-class LoginController extends Controller
+class loginController extends Controller
 {
     public function login(Request $request)
     {
