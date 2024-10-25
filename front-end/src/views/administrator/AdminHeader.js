@@ -67,6 +67,9 @@ const HeaderAdmin = () => {
                   <li className="nav-item">
                     <Link to="/administrator/coupons" className={`nav-link ${location.pathname === '/administrator/coupons' ? 'active' : ''}`}>Cupones</Link>
                   </li>
+                  <li className="nav-item">
+                    <Link to="/administrator/users" className={`nav-link ${location.pathname === '/administrator/users' ? 'active' : ''}`}>Usuarios</Link>
+                  </li>
                 </ul>
         
                 <div className="d-none d-lg-flex align-items-end align-items-center">

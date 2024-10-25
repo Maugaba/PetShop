@@ -1,19 +1,21 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Usuarios;
-use Illuminate\Foundation\Auth\User;
+use App\Models\Users;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
 
 class loginController extends Controller
 {
+    // Iniciar sesión
     public function login(Request $request)
     {
         try {
             // Validar las credenciales
-            $this->validate($request, [
+            $request->validate([
                 'email' => 'required|email',
                 'password' => 'required',
             ]);
@@ -27,10 +29,7 @@ class loginController extends Controller
                     'email' => $user->email,
                     'role_id' => $user->role_id,
                 ];
-                if ($user->role_id == 1) {
-                    $token = $user->createToken('token-name')->plainTextToken;
-                    $response['token'] = $token;
-                }
+
                 return response()->json($response, 200);
             }
 
@@ -45,78 +44,178 @@ class loginController extends Controller
         }
     }
 
-
+    // Cerrar sesión
     public function logout(Request $request)
     {
         try {
-            // Verificar si el usuario está autenticado
-            $user = $request->user();
-            
-            if ($user) {
-                // Revocar todos los tokens del usuario
-                $user->tokens()->delete();
-
-                // No necesitas llamar a Auth::logout() ya que estás trabajando con tokens
-                return response()->json([
-                    'message' => 'Sesión cerrada correctamente'
-                ], 200);
+            if (Auth::check()) {
+                Auth::logout();
+                Session::flush();
+                return response()->json(['message' => 'Sesión cerrada correctamente'], 200);
             } else {
-                return response()->json([
-                    'error' => 'No hay usuario autenticado'
-                ], 401);
+                return response()->json(['error' => 'No hay usuario autenticado'], 401);
             }
         } catch (\Throwable $e) {
-            // Captura cualquier excepción que ocurra durante el proceso de logout
             return response()->json(['error' => 'Error al cerrar sesión: ' . $e->getMessage()], 500);
         }
     }
 
+    // Cerrar sesión de cliente
     public function clientlogout(Request $request)
     {
         Auth::logout();
         Session::flush();
-        return response()->json([
-            'message' => 'Sesión cerrada correctamente'
-        ], 200);
+        return response()->json(['message' => 'Sesión cerrada correctamente'], 200);
     }
-    public function client_register()
+
+    // Obtener todos los usuarios (clientes)
+    public function getUsers()
     {
         try {
-            $usuario = new User();
-            $usuario->name = $_POST['name'];
-            $usuario->phone = $_POST['phone'];
-            $usuario->address = $_POST['address'];
-            $usuario->email = $_POST['email'];
-            $usuario->password = bcrypt($_POST['password']);
-            $usuario->role_id = 2;
-            $usuario->save();
-            return response()->json(['success' => 'Usuario creado correctamente'], 200);
-        } catch (\Illuminate\Database\QueryException $e) {
-            return response()->json(['message' => 'Error de base de datos al crear el usuario', 'error' => $e->getMessage()], 500);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['message' => 'Error de validación', 'errors' => $e->errors()], 422);
+            // Filtramos solo los clientes por su role_id (2 en este caso)
+            $users = Users::where('role_id', 2)->get();
+            return response()->json($users, 200);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error inesperado al crear el usuario', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error al obtener usuarios', 'error' => $e->getMessage()], 500);
         }
     }
 
-    public function user_register(){
+    // Registrar un cliente
+    public function client_register(Request $request)
+    {
         try {
-            $usuario = new User();
-            $usuario->name = $_POST['name'];
-            $usuario->phone = $_POST['phone'];
-            $usuario->address = $_POST['address'];
-            $usuario->email = $_POST['email'];
-            $usuario->password = bcrypt($_POST['password']);
-            $usuario->role_id = 1;
+            // Validar los datos del request
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'phone' => 'required|string|max:15',
+                'address' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users',
+                'password' => 'required|string|min:8',
+            ]);
+
+            // Crear un nuevo cliente
+            $usuario = new Users();
+            $usuario->name = $request->name;
+            $usuario->phone = $request->phone;
+            $usuario->address = $request->address;
+            $usuario->email = $request->email;
+            $usuario->password = Hash::make($request->password); // Usar Hash para la contraseña
+            $usuario->role_id = 2; // Rol de cliente
+            $usuario->state = true; // Estado activo por defecto al crear el usuario
             $usuario->save();
-            return response()->json(['success' => 'Usuario creado correctamente'], 200);
+
+            return response()->json(['success' => 'Cliente creado correctamente', 'usuario' => $usuario], 201);
+
         } catch (\Illuminate\Database\QueryException $e) {
-            return response()->json(['message' => 'Error de base de datos al crear el usuario', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error de base de datos al crear el cliente', 'error' => $e->getMessage()], 500);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['message' => 'Error de validación', 'errors' => $e->errors()], 422);
         } catch (\Exception $e) {
-            return response()->json(['message' => 'Error inesperado al crear el usuario', 'error' => $e->getMessage()], 500);
+            return response()->json(['message' => 'Error inesperado al crear el cliente', 'error' => $e->getMessage()], 500);
         }
     }
+
+    // Registrar un usuario administrativo
+    public function user_register(Request $request)
+    {
+        try {
+            // Validar los datos del request
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'phone' => 'required|string|max:15',
+                'address' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users,email',
+                'password' => 'required|string|min:8',
+            ]);
+
+            // Crear un nuevo usuario administrativo
+            $usuario = new Users();
+            $usuario->name = $request->name;
+            $usuario->phone = $request->phone;
+            $usuario->address = $request->address;
+            $usuario->email = $request->email;
+            $usuario->password = Hash::make($request->password); // Usar Hash para la contraseña
+            $usuario->role_id = 1; // Rol de administrador
+            $usuario->state = true; // Estado activo por defecto al crear el usuario
+            $usuario->save();
+
+            return response()->json(['success' => 'Usuario administrativo creado correctamente', 'usuario' => $usuario], 201);
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(['message' => 'Error de base de datos al crear el usuario administrativo', 'error' => $e->getMessage()], 500);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['message' => 'Error de validación', 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error inesperado al crear el usuario administrativo', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    // Actualizar un usuario existente
+    public function update(Request $request, $id)
+    {
+        try {
+            // Buscar el usuario
+            $usuario = Users::find($id);
+
+            if (!$usuario) {
+                return response()->json(['message' => 'Usuario no encontrado'], 404);
+            }
+
+            // Validar los datos del request
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'phone' => 'required|string|max:15',
+                'address' => 'required|string|max:255',
+                'email' => 'required|string|email|max:255|unique:users,email,'.$usuario->id,
+                'password' => 'nullable|string|min:8',  // La contraseña es opcional
+            ]);
+            \Log::info('Datos recibidos en la actualización:', $request->all());
+            // Actualizar los datos del usuario
+            $usuario->name = $request->name;
+            $usuario->phone = $request->phone;
+            $usuario->address = $request->address;
+            $usuario->email = $request->email;
+
+            // Solo actualizar la contraseña si se proporciona
+            if ($request->filled('password')) {
+                $usuario->password = Hash::make($request->password);
+            }
+
+            // Guardar los cambios
+            $usuario->save();
+
+            return response()->json(['success' => 'Usuario actualizado correctamente', 'usuario' => $usuario], 200);
+
+        } catch (\Illuminate\Database\QueryException $e) {
+            return response()->json(['message' => 'Error de base de datos al actualizar el usuario', 'error' => $e->getMessage()], 500);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json(['message' => 'Error de validación', 'errors' => $e->errors()], 422);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error inesperado al actualizar el usuario', 'error' => $e->getMessage()], 500);
+        }
+    }
+
+    // Cambiar el estado activo/inactivo de un usuario
+    public function changeStatus($id)
+    {
+        try {
+            $usuario = Users::find($id);
+
+            if (!$usuario) {
+                return response()->json(['message' => 'Usuario no encontrado'], 404);
+            }
+
+            // Cambiar el estado de activo/inactivo
+            $usuario->state = !$usuario->state;
+            $usuario->save();
+
+            \Log::info("Estado del usuario {$id} cambiado a: " . ($usuario->state ? 'activo' : 'inactivo')); // Agregar log para ver si se ejecuta
+            
+            return response()->json(['message' => 'Estado del usuario cambiado con éxito', 'usuario' => $usuario], 200);
+
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Error al cambiar el estado del usuario', 'error' => $e->getMessage()], 500);
+        }
+    }
+
 }

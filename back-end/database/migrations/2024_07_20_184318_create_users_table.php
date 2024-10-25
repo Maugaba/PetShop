@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('phone');
             $table->string('address');
             $table->string('password');
+            $table->boolean('state')->default(true);
             $table->string('two_factor_secret')->nullable();
             $table->string('two_factor_recovery_codes')->nullable();
             $table->foreignId('role_id')->constrained('roles');

@@ -14,7 +14,7 @@ import ContactUs from './views/contact/contact';
 
 import Checkout from './views/checkout/checkout';
 
-
+import ListUsersAdmin from './views/users/listUsersAdmin';
 
 
 function HeaderSwitcher() {
@@ -50,6 +50,7 @@ function App() {
         <Route path="/about" element={< AboutUs/>} />
         <Route path="/contact" element={< ContactUs/>} />
         <Route path="/checkout" element={<Checkout />} />
+        <Route path="/administrator/users" element={<ListUsersAdmin />} />
         <Route path="*" element={<ErrorPage />} /> 
       </Routes>
       
