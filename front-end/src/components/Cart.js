@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { Icon } from '@iconify/react'; 
 
 const Cart = () => {
   const { cart, updateQuantity } = useCart();
@@ -82,15 +83,17 @@ const Cart = () => {
 
 const CartNumber = () => {
   const { cart } = useCart();
+
   return (
-    <>
-      <a href="none" className="mx-3" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart"> 
-        <iconify-icon icon="mdi:cart" className="fs-4 position-relative"></iconify-icon>
-        <span className="position-absolute translate-middle badge rounded-circle bg-primary pt-2">
+    <a href="none" className="mx-3 position-relative" data-bs-toggle="offcanvas" data-bs-target="#offcanvasCart" aria-controls="offcanvasCart">
+      <Icon icon="f7:cart-fill" className="fs-4" />
+      {cart.length > 0 && (
+        <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary">
           {cart.length}
+          <span className="visually-hidden">items en el carrito</span>
         </span>
-      </a>
-    </>
+      )}
+    </a>
   );
 }
 

@@ -7,42 +7,10 @@ const HeaderAdmin = () => {
   return (
     <>
 
-      <div className="offcanvas offcanvas-end" data-bs-scroll="true" tabIndex="-1" id="offcanvasSearch"
-        aria-labelledby="Search">
-        <div className="offcanvas-header justify-content-center">
-          <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div className="offcanvas-body">
-          <div className="order-md-last">
-            <h4 className="text-primary text-uppercase mb-3">Buscar</h4>
-            <div className="search-bar border rounded-2 border-dark-subtle">
-              <form id="search-form" className="text-center d-flex align-items-center" action="" method="">
-                <input type="text" className="form-control border-0 bg-transparent" placeholder="Buscar aqui" />
-                <iconify-icon icon="tabler:search" className="fs-4 me-3"></iconify-icon>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <header>
-
-
-        <div className="container-fluid">
-          <hr className="m-0"></hr>
-        </div>
-        
         <div className="container">
-          
           <nav className="main-menu d-flex navbar navbar-expand-lg ">
-            <button className="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar"
-              aria-controls="offcanvasNavbar">
-              <span className="navbar-toggler-icon"></span>
-            </button>
             <div className="offcanvas offcanvas-end" tabIndex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
-              <div className="offcanvas-header justify-content-center">
-                <button type="button" className="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-              </div>
               <div className="offcanvas-body justify-content-between">
 
                 
