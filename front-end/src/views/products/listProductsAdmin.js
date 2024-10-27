@@ -337,7 +337,16 @@ const ListProductsAdmin = () => {
     axios.get(`${apiUrl}/products`)
       .then(response => {
         setProducts(response.data);
-      })
+         const lowStockProducts = response.data.filter(product => product.stock <= 5);
+          if (lowStockProducts.length > 0) {
+            Swal.fire({
+              title: 'Stock bajo',
+              text: 'Algunos productos tienen stock bajo',
+              icon: 'warning',
+              confirmButtonText: 'Aceptar'
+            });
+          }
+        })
       .catch(error => {
         console.error('Error fetching products:', error);
       });
@@ -368,7 +377,16 @@ const ListProductsAdmin = () => {
             { name: 'Nombre', selector: row => row.name, sortable: true },
             { name: 'Descripción', selector: row => row.description, sortable: true },
             { name: 'Especificaciones', selector: row => row.specifications, sortable: true },
-            { name: 'Stock', selector: row => row.stock, sortable: true },
+            { 
+              name: 'Stock', 
+              selector: row => row.stock, 
+              sortable: true,
+              cell: row => (
+                <span style={{ color: row.stock <= 5 ? 'red' : 'inherit' }}>
+                  {row.stock}
+                </span>
+              ),
+            },
             { name: 'Precio', selector: row => row.price, sortable: true },
             { name: 'Descuento', selector: row => row.discount, sortable: true },
             { name: 'Categoría', selector: row => row.product_category, sortable: true },

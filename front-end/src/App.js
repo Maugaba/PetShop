@@ -16,6 +16,7 @@ import Checkout from './views/checkout/checkout';
 
 import ListUsersAdmin from './views/users/listUsersAdmin';
 
+import FAQComponent from './views/faq/faq';
 
 function HeaderSwitcher() {
   const location = useLocation();
@@ -51,6 +52,7 @@ function App() {
         <Route path="/contact" element={< ContactUs/>} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/administrator/users" element={<ListUsersAdmin />} />
+        <Route path="/faq" element={<FAQComponent />} />
         <Route path="*" element={<ErrorPage />} /> 
       </Routes>
       
