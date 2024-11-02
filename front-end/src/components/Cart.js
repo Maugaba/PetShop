@@ -12,7 +12,6 @@ const Cart = () => {
     if (newQuantity > 0) {
       updateQuantity(productId, newQuantity);
     } else {
-      // Si la cantidad es 0 o negativa, eliminar el producto
       removeFromCart(productId);
     }
   };
@@ -22,7 +21,6 @@ const Cart = () => {
   const handleCheckout = (e) => {
     e.preventDefault();
     
-    // Navega a la vista de checkout con el carrito y el total actualizados
     navigate('/checkout', { state: { cart, total: updatedTotal } });
   };
 
@@ -69,7 +67,6 @@ const Cart = () => {
           </ul>
 
           <form onSubmit={handleCheckout}>
-            {/* Puedes eliminar los inputs ocultos si no son necesarios */}
             <div className="d-grid">
               <button 
                 className="w-100 btn btn-primary btn-lg" 

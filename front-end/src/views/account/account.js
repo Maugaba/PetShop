@@ -5,7 +5,6 @@ import { AuthContext } from '../../context/AuthContext';
 export default function Account() {
   const { user, login, logout } = useContext(AuthContext);
 
-  // Estados y funciones existentes para login y registro
   const [registrar, setRegistrar] = useState({
     name: '',
     email: '',
@@ -36,7 +35,6 @@ export default function Account() {
     }
   }, []);
 
-  // Funciones de manejo de cambios y envío de formularios (sin cambios)
   const translateError = (error) => {
     const translations = {
       'The password must be at least 8 characters.': 'La contraseña debe tener al menos 8 caracteres.',
@@ -89,7 +87,6 @@ export default function Account() {
         throw new Error(data.error || 'Error en el inicio de sesión');
       }
 
-      // Llamar al método login del AuthContext
       login({
         id: data.id,
         email: data.email,
@@ -103,8 +100,6 @@ export default function Account() {
         password: ''
       });
 
-      // Puedes redirigir al usuario o actualizar la interfaz según prefieras
-      // window.location.href = '/account'; // Si deseas mantener al usuario en la página de cuenta
 
     } catch (err) {
       setError(err.message);
@@ -156,7 +151,7 @@ export default function Account() {
       });
 
       sessionStorage.setItem('registerMessage', 'Registro exitoso. ¡Bienvenido!');
-      setActiveTab('nav-sign-in'); // Cambiar a la pestaña de inicio de sesión
+      setActiveTab('nav-sign-in'); 
 
     } catch (err) {
       setError(err.message);
@@ -170,9 +165,7 @@ export default function Account() {
     setFieldErrors({});
   };
 
-  // Verificar si el usuario está autenticado
   if (user) {
-    // Si el usuario está logueado, mostrar el mensaje de bienvenida y los botones
     return (
       <>
         <section id="banner" className="py-3" style={{ background: '#F9F3EC' }}>

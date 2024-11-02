@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    // Obtener el carrito del usuario autenticado
     public function getCart(Request $request)
     {
         $user = $request->user();
@@ -27,7 +26,6 @@ class CartController extends Controller
         return response()->json($cart->load('items.product'), 200);
     }
 
-    // Agregar un producto al carrito
     public function addToCart(Request $request)
     {
         $request->validate([
@@ -37,21 +35,17 @@ class CartController extends Controller
 
         $user = $request->user();
 
-        // Obtener o crear el carrito activo del usuario
         $cart = Cart::firstOrCreate(
             ['user_id' => $user->id, 'state' => 'active'],
             ['user_id' => $user->id, 'state' => 'active']
         );
 
-        // Verificar si el producto ya está en el carrito
         $cartItem = CartItem::where('cart_id', $cart->id)->where('product_id', $request->product_id)->first();
 
         if ($cartItem) {
-            // Si ya existe, actualizar la cantidad
             $cartItem->quantity += $request->quantity;
             $cartItem->save();
         } else {
-            // Si no existe, crear un nuevo item
             CartItem::create([
                 'cart_id' => $cart->id,
                 'product_id' => $request->product_id,
@@ -63,7 +57,6 @@ class CartController extends Controller
         return response()->json(['message' => 'Producto agregado al carrito'], 200);
     }
 
-    // Actualizar la cantidad de un producto en el carrito
     public function updateCart(Request $request)
     {
         $request->validate([
@@ -91,7 +84,6 @@ class CartController extends Controller
         }
     }
 
-    // Eliminar un producto del carrito
     public function removeFromCart(Request $request)
     {
         $request->validate([

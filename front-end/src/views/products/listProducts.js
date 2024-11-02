@@ -22,19 +22,19 @@ const BannerSection = () => {
 
 const ListProducts = () => {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);  // Estado para las categorías
+  const [categories, setCategories] = useState([]); 
   const [searchTerm, setSearchTerm] = useState('');
   const [priceRange, setPriceRange] = useState('Todos');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true); // Estado de carga
-  const [successMessage, setSuccessMessage] = useState(''); // Mensaje de éxito
-  const [errorMessage, setErrorMessage] = useState(''); // Mensaje de error
+  const [loading, setLoading] = useState(true); 
+  const [successMessage, setSuccessMessage] = useState(''); 
+  const [errorMessage, setErrorMessage] = useState(''); 
 
   const { addToCart } = useCart();
-  const { user } = useContext(AuthContext); // Obtiene el usuario autenticado
-  const navigate = useNavigate(); // Para redirigir al usuario
+  const { user } = useContext(AuthContext); 
+  const navigate = useNavigate(); 
 
   useEffect(() => {
     setLoading(true);
@@ -63,7 +63,6 @@ const ListProducts = () => {
 
   const handleAddToCart = async (product) => {
     if (!user) {
-      // Si el usuario no está autenticado, redirigirlo a la página de inicio de sesión
       navigate('/account');
     } else {
       try {

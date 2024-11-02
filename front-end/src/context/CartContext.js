@@ -9,7 +9,6 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const { user } = useContext(AuthContext);
 
-  // Función para obtener el carrito del backend
   const fetchCart = async () => {
     if (!user) return;
 
@@ -24,7 +23,6 @@ export const CartProvider = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
-        // Mapear los items del carrito
         const items = data.items.map(item => ({
           id: item.product.id,
           name: item.product.name,
@@ -46,7 +44,6 @@ export const CartProvider = ({ children }) => {
 
   const addToCart = async (product) => {
     if (!user) {
-      // Manejar caso de usuario no autenticado
       console.error('Debe iniciar sesión para agregar productos al carrito');
       return;
     }
@@ -66,7 +63,6 @@ export const CartProvider = ({ children }) => {
       });
 
       if (response.ok) {
-        // Actualizar el carrito local
         await fetchCart();
       } else {
         console.error('Error al agregar producto al carrito');
@@ -94,7 +90,6 @@ export const CartProvider = ({ children }) => {
       });
 
       if (response.ok) {
-        // Actualizar el carrito local
         await fetchCart();
       } else {
         console.error('Error al actualizar cantidad en el carrito');
@@ -121,7 +116,6 @@ export const CartProvider = ({ children }) => {
       });
 
       if (response.ok) {
-        // Actualizar el carrito local
         await fetchCart();
       } else {
         console.error('Error al eliminar producto del carrito');
