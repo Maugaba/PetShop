@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { AuthContext } from '../../context/AuthContext';
 import { Link, useLocation } from 'react-router-dom';
 
 const HeaderAdmin = () => {
   const location = useLocation();
-
+  const { logout } = useContext(AuthContext);
   return (
     <>
 
@@ -42,7 +43,7 @@ const HeaderAdmin = () => {
         
                 <div className="d-none d-lg-flex align-items-end align-items-center">
                   <ul className="d-flex justify-content-end list-unstyled m-0">
-                  <Link to="/administrator/dashboard"><button className="btn btn-danger" style={{width: '150px'}}>Cerrar sesion</button></Link>
+                  <button className="btn btn-danger" style={{width: '150px'}} onClick={logout}>Cerrar sesion</button>
                   </ul>
                 </div>
 

@@ -1,25 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import Cart, { CartNumber } from './Cart';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '@iconify/react'; 
+import { AuthContext } from '../context/AuthContext';
 
 const Header = () => {
   const location = useLocation();
-  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const userId = localStorage.getItem('id_user');
-    setIsAdmin(userId === '1');
-  }, []);
-
-
-
-  const handleLogout = () => {
-    localStorage.removeItem('id_user');
-    setIsAdmin(false);
-    navigate('/');
-  };
+  const { isLogged, logout, user } = useContext(AuthContext);
 
   return (
     <>
@@ -61,17 +49,20 @@ const Header = () => {
                       <CartNumber />
                     </li>
                     <li>
-                      {isAdmin ? (
+                      {!isLogged ? (
                         <div className="d-flex">
-                          <button className="btn btn-primary btn-sm me-2" onClick={() => navigate('/administrator/dashboard')}>Administrador</button>
-                          <button className="btn btn-danger btn-sm" onClick={handleLogout}>Cerrar Sesión</button>
+                          <button className="btn btn-primary btn-sm me-2" onClick={() => navigate('/account')}>Iniciar sesión</button>
                         </div>
                       ) : (
                         <div className="d-flex">
-                          <button className="btn btn-primary btn-sm me-2" onClick={() => navigate('/login')}>Iniciar sesion</button>
+                          {user?.role_id === 1 && (
+                            <button className="btn btn-primary btn-sm me-2" onClick={() => navigate('/administrator/dashboard')}>Administrador</button>
+                          )}
+                          <button className="btn btn-danger btn-sm" onClick={logout}>Cerrar Sesión</button>
                         </div>
                       )}
                     </li>
+
                   </ul>
                 </div>
               </div>

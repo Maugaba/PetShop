@@ -100,7 +100,6 @@ export default function Account() {
         password: ''
       });
 
-
     } catch (err) {
       setError(err.message);
     }
