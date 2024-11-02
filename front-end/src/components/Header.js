@@ -31,8 +31,8 @@ const Header = () => {
               <div className="offcanvas-body justify-content-between">
                 <div className="d-none d-lg-flex align-items-start align-items-center">
                   <div className="main-logo">
-                    <a href="index.html">
-                      <img src="/images/LogoV2.png" alt="logo" className="img-fluid" style={{ height: '65px', width: '150px' }} />
+                    <a href="/">
+                      <img src="/images/LogoV2.png" alt="logo" className="img-fluid" style={{ height: '100px', width: '250px' }} />
                     </a>
                   </div>
                 </div>  

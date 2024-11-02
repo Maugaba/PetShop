@@ -1,0 +1,19 @@
+.custom-input {
+  background-color: #ffffff;
+  outline: none;
+}
+
+.custom-input:hover {
+  border-color: #a0a0a0 !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+}
+
+.custom-input:focus {
+  border-color: #666 !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+}
+
+.custom-input::placeholder {
+  color: #999;
+  opacity: 0.8;
+}

@@ -1,15 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { Icon } from '@iconify/react'; 
+import { Icon } from '@iconify/react';
 
 const Cart = () => {
-  const { cart, updateQuantity } = useCart();
+  const { cart, updateQuantity, removeFromCart } = useCart();
   const navigate = useNavigate();
 
   const handleQuantityChange = (e, productId) => {
     const newQuantity = parseInt(e.target.value, 10);
-    updateQuantity(productId, newQuantity);
+    if (newQuantity > 0) {
+      updateQuantity(productId, newQuantity);
+    } else {
+      // Si la cantidad es 0 o negativa, eliminar el producto
+      removeFromCart(productId);
+    }
   };
 
   const updatedTotal = cart.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity || 0), 0);
@@ -37,7 +42,8 @@ const Cart = () => {
               <li className="list-group-item d-flex justify-content-between lh-sm" key={index}>
                 <div>
                   <h6 className="my-0">{item.name}</h6>
-                  <small className="text-body-secondary">Cantidad: 
+                  <small className="text-body-secondary">
+                    Cantidad: 
                     <input 
                       type="number" 
                       value={item.quantity} 
@@ -45,6 +51,12 @@ const Cart = () => {
                       onChange={(e) => handleQuantityChange(e, item.id)} 
                       style={{ width: '50px', marginLeft: '10px' }}
                     />
+                    <button 
+                      className="btn btn-link text-danger p-0 ms-2" 
+                      onClick={() => removeFromCart(item.id)}
+                    >
+                      Eliminar
+                    </button>
                   </small>
                 </div>
                 <span className="text-body-secondary">Q{(item.price * item.quantity).toFixed(2)}</span>
@@ -57,13 +69,7 @@ const Cart = () => {
           </ul>
 
           <form onSubmit={handleCheckout}>
-            {cart.map(item => (
-              <React.Fragment key={item.id}>
-                <input type="hidden" name={`products[${item.id}][id]`} value={item.id} />
-                <input type="hidden" name={`products[${item.id}][name]`} value={item.name} />
-                <input type="hidden" name={`products[${item.id}][quantity]`} value={item.quantity} />
-              </React.Fragment>
-            ))}
+            {/* Puedes eliminar los inputs ocultos si no son necesarios */}
             <div className="d-grid">
               <button 
                 className="w-100 btn btn-primary btn-lg" 
