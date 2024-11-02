@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback  } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 const CartContext = createContext();
@@ -9,7 +9,7 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const { user } = useContext(AuthContext);
 
-  const fetchCart = async () => {
+  const fetchCart = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -36,11 +36,12 @@ export const CartProvider = ({ children }) => {
     } catch (error) {
       console.error('Error al obtener el carrito:', error);
     }
-  };
+  }, [user]);
 
   useEffect(() => {
     fetchCart();
-  }, [user]);
+  }, [fetchCart]);
+  
 
   const addToCart = async (product) => {
     if (!user) {
