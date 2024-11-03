@@ -17,14 +17,14 @@ class userController extends Controller
         return response()->json($users);
     }
     
-    public function update($id) {
+    public function update($id, request $request) {
         try {
             $usuario = user::findOrFail($id);
-            $usuario->nombre = $_POST['nombre'];
-            $usuario->apellido = $_POST['apellido'];
-            $usuario->correo_electronico = $_POST['correo_electronico'];
-            $usuario->usuario = $_POST['usuario'];
-            $usuario->id_rol = $_POST['id_rol'];
+            $usuario->name = $request->name;
+            $usuario->phone = $request->phone;
+            $usuario->address = $request->address;
+            $usuario->email = $request->email;
+            $usuario->role_id = $request->role_id;
             $usuario->save();
     
             return response()->json(['success' => 'Datos actualizados correctamente']);

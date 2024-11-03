@@ -16,8 +16,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('client')->group(function () {
         Route::post('/change/password/{id}', 'App\Http\Controllers\userController@change_password')->name('usuarios.change_password');
-        Route::put('/update/{id}', 'App\Http\Controllers\userController@update')->name('usuarios.update');
+        Route::post('/update/{id}', 'App\Http\Controllers\userController@update')->name('usuarios.update');
         Route::get('/logout', 'App\Http\Controllers\loginController@clientlogout')->name('clientlogout');
+        Route::get('/users', 'App\Http\Controllers\loginController@getUsers')->name('users.index');
     });
 
     Route::prefix('carrito')->group(function (){
@@ -26,6 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/cart/update', 'App\Http\Controllers\CartController@updateCart')->name('cart.update');
         Route::post('/cart/remove', 'App\Http\Controllers\CartController@removeFromCart')->name('cart.remove');
     });
+    
+    Route::post('/orders', 'App\Http\Controllers\OrderController@store')->name('order.store');
 
     Route::middleware('admin')->group(function () {
 
