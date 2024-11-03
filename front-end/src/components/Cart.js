@@ -17,11 +17,12 @@ const Cart = () => {
   };
 
   const updatedTotal = cart.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity || 0), 0);
-
+  const updated_card_ids = cart.map((item) => (item.id_cart));
+  const updated_cart = updated_card_ids[0];
   const handleCheckout = (e) => {
     e.preventDefault();
     
-    navigate('/checkout', { state: { cart, total: updatedTotal } });
+    navigate('/checkout', { state: { cart, total: updatedTotal, cart_id: updated_cart} });
   };
 
   return (

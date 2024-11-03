@@ -24,7 +24,7 @@ class loginController extends Controller
             if (Auth::attempt($credentials)) {
                 $user = Auth::user();
                 $token = $user->createToken('auth_token')->plainTextToken;
-    
+                $_SESSION['id_user'] = $user->id;
                 $response = [
                     'id' => $user->id,
                     'email' => $user->email,

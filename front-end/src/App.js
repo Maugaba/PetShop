@@ -20,6 +20,8 @@ import OrderTrackingAdmin from './views/orderTracking/orderTrackingAdmin';
 
 import FAQComponent from './views/faq/faq';
 
+import OrderList from './views/myorders/myorders';
+
 import { AuthProvider } from './context/AuthContext'; 
 
 function HeaderSwitcher() {
@@ -54,14 +56,12 @@ function App() {
         <Route path="/contact" element={< ContactUs/>} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/administrator/users" element={<ListUsersAdmin />} />
-<<<<<<< HEAD
         <Route path="/order-tracking" element={<OrderTracking />} />
         <Route path="/administrator/orders" element={<OrderTrackingAdmin />} />
-=======
         <Route path="/account" element={<Account />} />
->>>>>>> 09186abc084479b99355541af6085263e57443f1
         <Route path="/faq" element={<FAQComponent />} />
         <Route path="*" element={<ErrorPage />} /> 
+        <Route path="/myorders" element={<OrderList />} />
       </Routes>
       
       <Footer />

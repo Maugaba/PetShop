@@ -15,7 +15,7 @@ class CreatePaymentsTable extends Migration
     {
         Schema::create('payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cart_id')->constrained('carts');
+            $table->integer('cart_id'); // ID del carrito al que pertenece el pago
             $table->string('payment_method'); // 'stripe', 'paypal', 'bank_transfer'
             $table->string('transaction_id')->nullable(); // ID de la transacción proporcionado por el proveedor de pagos
             $table->decimal('amount', 8, 2); // Monto del pago

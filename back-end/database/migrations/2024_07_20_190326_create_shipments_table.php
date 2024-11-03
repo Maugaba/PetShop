@@ -15,7 +15,7 @@ class CreateShipmentsTable extends Migration
     {
         Schema::create('shipments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cart_id')->constrained('carts');
+            $table->integer('cart_id');
             $table->string('address');
             $table->string('city');
             $table->string('postal_code');

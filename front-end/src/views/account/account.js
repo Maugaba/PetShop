@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Icon } from '@iconify/react';
+import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import apiUrl from '../../api/apiUrl';
 
 export default function Account() {
-  const { user, login, logout } = useContext(AuthContext);
+  const { user, login } = useContext(AuthContext);
 
   const [registrar, setRegistrar] = useState({
     name: '',
@@ -186,11 +187,9 @@ export default function Account() {
             <div className="row">
               <div className="col-lg-12">
                 <h2>Bienvenido, {user.name}</h2>
-                <button onClick={logout} className="btn btn-danger mb-3">Cerrar Sesión</button>
 
                 <div className="mt-4">
-                  <button className="btn btn-primary mx-2">Mis Pedidos</button>
-                  <button className="btn btn-secondary mx-2">Mis Compras</button>
+                  <Link to="/myorders" className="btn btn-dark btn-lg rounded-1">Mis Pedidos</Link>
                 </div>
               </div>
             </div>

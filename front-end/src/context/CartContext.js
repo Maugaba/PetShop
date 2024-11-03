@@ -27,8 +27,9 @@ export const CartProvider = ({ children }) => {
         const items = data.items.map(item => ({
           id: item.product.id,
           name: item.product.name,
-          price: parseFloat(item.product.price),
+          price: parseFloat(item.product.price - item.product.discount),
           quantity: item.quantity,
+          id_cart: data.id,
         }));
         setCartItems(items);
       } else {

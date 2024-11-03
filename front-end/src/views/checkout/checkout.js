@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useLocation, Link, useNavigate } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import axios from 'axios';
 import apiUrl from '../../api/apiUrl';
+import Swal from 'sweetalert2';
 
 const BannerSection = () => {
   return (
@@ -20,9 +21,8 @@ const BannerSection = () => {
 };
 
 const Checkout = () => {
-  const navigate = useNavigate();
   const location = useLocation();
-  const { cart = [], total = 0} = location.state || { cart: [], total: 0 };
+  const { cart = [], total = 0, cart_id = 0} = location.state || { cart: [], total: 0, cart_id: 0 };
   const [selectedDepartment, setSelectedDepartment] = useState('Guatemala'); // Inicializar con un valor por defecto
   var shippingCost = 0;
   if (selectedDepartment === 'Guatemala' && total >= 150) {
@@ -32,7 +32,6 @@ const Checkout = () => {
     shippingCost = 35;
   }
   const formattedTotal = (total + shippingCost).toFixed(2);
-
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -44,11 +43,13 @@ const Checkout = () => {
     state: 'Guatemala', // Inicializar state con el mismo valor que selectedDepartment
     zip: '',
     notes: '',
-    paymentMethod: 'bankTransfer',
+    paymentMethod: 'Transferencia Bancaria',
     transactionNumber: '',
     checkNumber: '',
-    cart
+    cart,
+    cart_id,
   });
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -73,6 +74,7 @@ const Checkout = () => {
   };
 
   const handlePaypalPayment = async () => {
+    setIsProcessing(true);
     const transactionId = generateTransactionId();
     try {
       const orderData = {
@@ -88,19 +90,37 @@ const Checkout = () => {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
       });
-      console.log('PayPal payment response:', response);
+      
       if (response.status === 200 || response.status === 201) {
-        navigate('/myorders');
+        await Swal.fire({
+          title: '¡Orden procesada!',
+          text: 'Redirigiendo a PayPal...',
+          icon: 'success',
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false
+        });
+        
+        // Simulate PayPal redirect
+        setTimeout(() => {
+          window.location.href = '/myorders';
+        }, 2000);
       }
     } catch (error) {
       console.error('Error processing PayPal payment:', error);
-      alert('Error al procesar el pago con PayPal');
+      Swal.fire({
+        title: 'Error',
+        text: 'Error al procesar el pago con PayPal',
+        icon: 'error'
+      });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
   const renderPaymentFields = () => {
     switch (formData.paymentMethod) {
-      case 'bankTransfer':
+      case 'Transferencia Bancaria':
         return (
           <div className="mt-3">
             <label htmlFor="transactionNumber">Número de Transacción*</label>
@@ -115,7 +135,7 @@ const Checkout = () => {
             />
           </div>
         );
-      case 'checkPayments':
+      case 'Pago con Cheque':
         return (
           <div className="mt-3">
             <label htmlFor="checkNumber">Número de Cheque*</label>
@@ -137,12 +157,13 @@ const Checkout = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsProcessing(true);
     
     if (formData.paymentMethod === 'paypal') {
       handlePaypalPayment();
       return;
     }
-    console.log('Order submission response:');
+
     try {
       const orderData = {
         ...formData,
@@ -157,13 +178,26 @@ const Checkout = () => {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
       });
-      console.log('Order submission response:', response);
+      
       if (response.status === 200 || response.status === 201) {
-        navigate('/myorders');
+        await Swal.fire({
+          title: '¡Éxito!',
+          text: 'Su orden ha sido procesada correctamente',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
+        window.location.href = '/myorders';
       }
     } catch (error) {
       console.error('Error submitting order:', error);
-      alert('Error al procesar la orden');
+      Swal.fire({
+        title: 'Error',
+        text: 'Error al procesar la orden',
+        icon: 'error'
+      });
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -340,8 +374,8 @@ const Checkout = () => {
                         className="form-check-input flex-shrink-0"
                         type="radio"
                         name="paymentMethod"
-                        value="bankTransfer"
-                        checked={formData.paymentMethod === 'bankTransfer'}
+                        value="Transferencia Bancaria"
+                        checked={formData.paymentMethod === 'Transferencia Bancaria'}
                         onChange={handleChange}
                       />
                       <span>
@@ -354,7 +388,7 @@ const Checkout = () => {
                         className="form-check-input flex-shrink-0"
                         type="radio"
                         name="paymentMethod"
-                        value="checkPayments"
+                        value="Pago con Cheque"
                         onChange={handleChange}
                       />
                       <span>
@@ -366,7 +400,7 @@ const Checkout = () => {
                         className="form-check-input flex-shrink-0"
                         type="radio"
                         name="paymentMethod"
-                        value="cashOnDelivery"
+                        value="Pago Contra Entrega"
                         onChange={handleChange}
                       />
                       <span>
@@ -384,7 +418,13 @@ const Checkout = () => {
                     <strong className="text-uppercase">Paypal</strong> </span> </label>
                     {renderPaymentFields()}
                 </div> 
-                <button type="submit" className="btn btn-primary mt-4 w-100"> Realizar Pedido </button> 
+                <button 
+                  type="submit" 
+                  className="btn btn-primary mt-4 w-100"
+                  disabled={isProcessing}
+                > 
+                  {isProcessing ? 'Procesando...' : 'Realizar Pedido'}
+                </button>
                 </div> 
             </div> 
         </div> 

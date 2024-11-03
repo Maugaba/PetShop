@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     
     Route::post('/orders', 'App\Http\Controllers\OrderController@store')->name('order.store');
+    Route::get('/orders', 'App\Http\Controllers\OrderController@get_orders')->name('order.get_orders');
 
     Route::middleware('admin')->group(function () {
 
