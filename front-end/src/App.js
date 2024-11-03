@@ -22,7 +22,6 @@ import { AuthProvider } from './context/AuthContext';
 
 function HeaderSwitcher() {
   const location = useLocation();
-  console.log('Ruta actual:', location.pathname); 
 
   if (location.pathname.startsWith('/administrator')) {
     return <HeaderAdmin />;

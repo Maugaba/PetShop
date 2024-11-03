@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import apiUrl from '../../api/apiUrl';
 
 const BannerSection = () => {
   return (
@@ -18,27 +20,33 @@ const BannerSection = () => {
 };
 
 const Checkout = () => {
+  const navigate = useNavigate();
   const location = useLocation();
-  const { cart = [], total = 0, cart2} = location.state || { cart: [], total: 0 };
-  const [selectedDepartment, setSelectedDepartment] = useState(''); // Estado para el departamento
-  const shippingCost = selectedDepartment !== 'Guatemala' && total <= 150 ? 35 : 0; // Costo de envío
-  const formattedTotal = (total + shippingCost).toFixed(2); // Total general incluyendo envío si aplica
-  console.log('Datos del carrito:', cart, total, cart2);
+  const { cart = [], total = 0} = location.state || { cart: [], total: 0 };
+  const [selectedDepartment, setSelectedDepartment] = useState('Guatemala'); // Inicializar con un valor por defecto
+  var shippingCost = 0;
+  if (selectedDepartment === 'Guatemala' && total >= 150) {
+    shippingCost = 0;
+  }
+  else {
+    shippingCost = 35;
+  }
+  const formattedTotal = (total + shippingCost).toFixed(2);
 
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    companyName: '',
+    nit: '',
     country: 'Guatemala',
     address: '',
     address2: '',
     city: '',
-    state: '',
+    state: 'Guatemala', // Inicializar state con el mismo valor que selectedDepartment
     zip: '',
-    phone: '',
-    email: '',
     notes: '',
     paymentMethod: 'bankTransfer',
+    transactionNumber: '',
+    checkNumber: '',
     cart
   });
 
@@ -50,9 +58,113 @@ const Checkout = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  // Modificar el manejador del cambio de departamento
+  const handleDepartmentChange = (e) => {
+    const value = e.target.value;
+    setSelectedDepartment(value);
+    setFormData(prev => ({
+      ...prev,
+      state: value
+    }));
+  };
+
+  const generateTransactionId = () => {
+    return 'PYPL-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+  };
+
+  const handlePaypalPayment = async () => {
+    const transactionId = generateTransactionId();
+    try {
+      const orderData = {
+        ...formData,
+        cart,
+        shipmentCost: shippingCost,
+        total: parseFloat(formattedTotal),
+        transactionNumber: transactionId
+      };
+      const response = await axios.post(apiUrl + '/orders', orderData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+      console.log('PayPal payment response:', response);
+      if (response.status === 200 || response.status === 201) {
+        navigate('/myorders');
+      }
+    } catch (error) {
+      console.error('Error processing PayPal payment:', error);
+      alert('Error al procesar el pago con PayPal');
+    }
+  };
+
+  const renderPaymentFields = () => {
+    switch (formData.paymentMethod) {
+      case 'bankTransfer':
+        return (
+          <div className="mt-3">
+            <label htmlFor="transactionNumber">Número de Transacción*</label>
+            <input
+              type="text"
+              id="transactionNumber"
+              name="transactionNumber"
+              className="form-control mt-2 mb-4 ps-3"
+              value={formData.transactionNumber}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        );
+      case 'checkPayments':
+        return (
+          <div className="mt-3">
+            <label htmlFor="checkNumber">Número de Cheque*</label>
+            <input
+              type="text"
+              id="checkNumber"
+              name="checkNumber"
+              className="form-control mt-2 mb-4 ps-3"
+              value={formData.checkNumber}
+              onChange={handleChange}
+              required
+            />
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Datos de la orden:', { ...formData, cart, total });
+    
+    if (formData.paymentMethod === 'paypal') {
+      handlePaypalPayment();
+      return;
+    }
+    console.log('Order submission response:');
+    try {
+      const orderData = {
+        ...formData,
+        cart,
+        shippingCost,
+        total: parseFloat(formattedTotal)
+        
+      };
+      const response = await axios.post(apiUrl + '/orders', orderData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+        }
+      });
+      console.log('Order submission response:', response);
+      if (response.status === 200 || response.status === 201) {
+        navigate('/myorders');
+      }
+    } catch (error) {
+      console.error('Error submitting order:', error);
+      alert('Error al procesar la orden');
+    }
   };
 
   return (
@@ -85,13 +197,13 @@ const Checkout = () => {
                     onChange={handleChange}
                     required
                   />
-                  <label htmlFor="companyName">Nombre de la Empresa (opcional)</label>
+                  <label htmlFor="nit">NIT</label>
                   <input
                     type="text"
-                    id="companyName"
-                    name="companyName"
+                    id="nit"
+                    name="nit"
                     className="form-control mt-2 mb-4"
-                    value={formData.companyName}
+                    value={formData.nit}
                     onChange={handleChange}
                   />
                   <label htmlFor="country">País / Región*</label>
@@ -108,7 +220,7 @@ const Checkout = () => {
                     name="state"
                     className="form-select form-control mt-2 mb-4"
                     value={selectedDepartment}
-                    onChange={(e) => setSelectedDepartment(e.target.value)}
+                    onChange={handleDepartmentChange} // Usar el nuevo manejador
                   >
                     <option value="Alta Verapaz">Alta Verapaz</option>
                     <option value="Baja Verapaz">Baja Verapaz</option>
@@ -163,26 +275,6 @@ const Checkout = () => {
                     onChange={handleChange}
                     required
                   />
-                  <label htmlFor="phone">Teléfono *</label>
-                  <input
-                    type="text"
-                    id="phone"
-                    name="phone"
-                    className="form-control mt-2 mb-4 ps-3"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    required
-                  />
-                  <label htmlFor="email">Correo Electrónico *</label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    className="form-control mt-2 mb-4 ps-3"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                  />
                 </div>
               </div>
               <div className="col-lg-6">
@@ -210,39 +302,37 @@ const Checkout = () => {
                       </tr>
                     </thead>
                     <tbody>
-                        {cart.map((item, index) => (
-                            <tr key={index}>
-                            <td>{item.name}</td>
-                            <td>{item.quantity}</td>
-                            <td>Q{(item.price)}</td>
-                            <td>Q{(item.price * item.quantity).toFixed(2)}</td>
-                            </tr>
-                        ))}
-                        <tr className="order-total border-bottom pt-2 pb-2 text-uppercase">
-                            <th>Total Envío</th>
-                            <td colSpan="2"></td> {/* Deja este espacio vacío para que no afecte la alineación */}
-                            <td>
-                            <span className="price-amount amount ">
-                                <bdi>
-                                    <span className="price-currency-symbol">Q</span>{shippingCost.toFixed(2)}
-                                </bdi>
-                            </span>
-                            </td>
+                      {cart.map((item, index) => (
+                        <tr key={index}>
+                          <td>{item.name}</td>
+                          <td>{item.quantity}</td>
+                          <td>Q{item.price}</td>
+                          <td>Q{(item.price * item.quantity).toFixed(2)}</td>
                         </tr>
-                        <tr className="order-total border-bottom pt-2 pb-2 text-uppercase">
-                            <th>Total General</th>
-                            <td colSpan="2"></td> {/* Deja este espacio vacío para que no afecte la alineación */}
-                            <td>
-                            <span className="price-amount amount ">
-                                <bdi>
-                                <span className="price-currency-symbol">Q</span>{formattedTotal}
-                                </bdi>
-                            </span>
-                            </td>
-                        </tr>
-                        </tbody>
-
-
+                      ))}
+                      <tr className="order-total border-bottom pt-2 pb-2 text-uppercase">
+                        <th>Total Envío</th>
+                        <td colSpan="2"></td>
+                        <td>
+                          <span className="price-amount amount">
+                            <bdi>
+                              <span className="price-currency-symbol">Q</span>{shippingCost.toFixed(2)}
+                            </bdi>
+                          </span>
+                        </td>
+                      </tr>
+                      <tr className="order-total border-bottom pt-2 pb-2 text-uppercase">
+                        <th>Total General</th>
+                        <td colSpan="2"></td>
+                        <td>
+                          <span className="price-amount amount">
+                            <bdi>
+                              <span className="price-currency-symbol">Q</span>{formattedTotal}
+                            </bdi>
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
                   </table>
                   <div className="list-group mt-5 mb-3">
                     <label className="list-group-item d-flex gap-2 border-0">
@@ -256,6 +346,7 @@ const Checkout = () => {
                       />
                       <span>
                         <strong className="text-uppercase">Transferencia Bancaria</strong>
+                        <p className="small mb-0">Realiza tu transferencia al banco BAC CREDOMATIC cuenta monetaria #45654521</p>
                       </span>
                     </label>
                     <label className="list-group-item d-flex gap-2 border-0">
@@ -291,6 +382,7 @@ const Checkout = () => {
                         onChange={handleChange} /> 
                     <span> 
                     <strong className="text-uppercase">Paypal</strong> </span> </label>
+                    {renderPaymentFields()}
                 </div> 
                 <button type="submit" className="btn btn-primary mt-4 w-100"> Realizar Pedido </button> 
                 </div> 

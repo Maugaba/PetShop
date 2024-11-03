@@ -55,7 +55,10 @@ const AddCategoryModal = ({ show, handleClose, refreshCategories, editingCategor
     const method = editingCategory ? 'put' : 'post'; // Cambiar a PUT si es actualización
 
     axios[method](endpoint, formData, {
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+      }
+      
     })
     .then(() => {
       const action = editingCategory ? 'actualizada' : 'creada';
@@ -128,7 +131,7 @@ const handleToggleState = (category, refreshCategories) => {
   }).then((result) => {
     if (result.isConfirmed) {
       axios.post(`${apiUrl}/categories/change-status/${category.id}`, {}, {
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
       })
       .then(() => {
         Swal.fire('Actualizado', `La categoría ha sido ${category.state ? 'desactivada' : 'activada'} exitosamente.`, 'success');

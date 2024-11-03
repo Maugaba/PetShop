@@ -5,21 +5,12 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-const swiperStyles = {
-  '.swiper-button-next::after, .swiper-button-prev::after': {
-    color: '#F7EEE4',
-    fontSize: '24px',
-    fontWeight: 'bold'
-  }
-};
-
 export default function Dashboard() {
   return (
     <section id="banner" style={{ background: '#F9F3EC' }}>
       <div className="container">
         <Swiper
             className="main-swiper"
-            style={swiperStyles}
             pagination={{
               clickable: true,
               el: '.swiper-pagination.mb-5',
@@ -70,8 +61,14 @@ export default function Dashboard() {
               </div>
             </div>
           </SwiperSlide>
-          <div className="swiper-button-prev"></div>
-          <div className="swiper-button-next"></div>
+          <div 
+            className="swiper-button-prev" 
+            style={{ color: '#F7EEE4', fontSize: '24px', fontWeight: 'bold' }}
+          ></div>
+          <div 
+            className="swiper-button-next"
+            style={{ color: '#F7EEE4', fontSize: '24px', fontWeight: 'bold' }}
+          ></div>
           <div className="swiper-pagination mb-5"></div>
         </Swiper>
       </div>

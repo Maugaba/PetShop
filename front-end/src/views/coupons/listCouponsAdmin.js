@@ -71,7 +71,9 @@ const AddCouponModal = ({ show, handleClose, refreshCoupons, editingCoupon, setE
 
     if (editingCoupon) {
       // Actualizar cupón existente
-      axios.post(`${apiUrl}/coupons/${editingCoupon.id}`, formattedData)
+      axios.post(`${apiUrl}/coupons/${editingCoupon.id}`, formattedData, {
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+      })
         .then((response) => {
           Swal.fire('Actualizado', 'El cupón ha sido actualizado exitosamente.', 'success');
           handleClose();
@@ -83,7 +85,9 @@ const AddCouponModal = ({ show, handleClose, refreshCoupons, editingCoupon, setE
         });
     } else {
       // Crear nuevo cupón
-      axios.post(`${apiUrl}/coupons`, formattedData)
+      axios.post(`${apiUrl}/coupons`, formattedData, {
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+      })
         .then((response) => {
           Swal.fire('Creado', 'El cupón ha sido creado exitosamente.', 'success');
           handleClose();
@@ -195,7 +199,9 @@ const handleDeactivate = (id, refreshCoupons) => {
     cancelButtonText: 'Cancelar'
   }).then((result) => {
     if (result.isConfirmed) {
-      axios.post(`${apiUrl}/coupons/change-status/${id}`)
+      axios.post(`${apiUrl}/coupons/change-status/${id}`, {}, {
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+      })
         .then(response => {
           Swal.fire('Desactivado', 'El cupón ha sido desactivado.', 'success');
           refreshCoupons();

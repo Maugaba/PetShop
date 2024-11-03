@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback  } from 'react';
+import apiUrl from '../api/apiUrl';
 import { AuthContext } from '../context/AuthContext';
 
 const CartContext = createContext();
@@ -13,7 +14,7 @@ export const CartProvider = ({ children }) => {
     if (!user) return;
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/carrito/cart', {
+      const response = await fetch(`${apiUrl}/carrito/cart`, {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -50,7 +51,7 @@ export const CartProvider = ({ children }) => {
     }
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/carrito/cart/add', {
+      const response = await fetch(`${apiUrl}/carrito/cart/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +78,7 @@ export const CartProvider = ({ children }) => {
     if (!user) return;
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/carrito/cart/update', {
+      const response = await fetch(`${apiUrl}/carrito/cart/update`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -104,7 +105,7 @@ export const CartProvider = ({ children }) => {
     if (!user) return;
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/carrito/cart/remove', {
+      const response = await fetch(`${apiUrl}/carrito/cart/remove`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

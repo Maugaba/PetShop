@@ -110,7 +110,8 @@ const AddProductModal = ({ show, handleClose, refreshProducts, editingProduct, s
       // Actualizar producto existente
       axios.post(`${apiUrl}/products/${editingProduct.id}`, formDataSend, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
       })
       .then((response) => {
@@ -126,7 +127,8 @@ const AddProductModal = ({ show, handleClose, refreshProducts, editingProduct, s
       // Crear nuevo producto
       axios.post(`${apiUrl}/products`, formDataSend, {
         headers: {
-          'Content-Type': 'multipart/form-data'
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
       })
       .then((response) => {
@@ -143,7 +145,11 @@ const AddProductModal = ({ show, handleClose, refreshProducts, editingProduct, s
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    axios.get(`${apiUrl}/categories`)
+    axios.get(`${apiUrl}/categories`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+      }
+    })
       .then(response => {
         setCategories(response.data);
       })
@@ -312,7 +318,9 @@ const handleDeactivate = (id, refreshProducts) => {
     cancelButtonText: 'Cancelar'
   }).then((result) => {
     if (result.isConfirmed) {
-      axios.post(`${apiUrl}/products/change-status/${id}`)
+      axios.post(`${apiUrl}/products/change-status/${id}`, {}, {
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+      })
         .then(response => {
           Swal.fire('Desactivado', 'El producto ha sido desactivado.', 'success');
           refreshProducts();
@@ -334,7 +342,11 @@ const ListProductsAdmin = () => {
   }, []);
 
   const fetchProducts = () => {
-    axios.get(`${apiUrl}/products`)
+    axios.get(`${apiUrl}/products`, {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+      }
+    })
       .then(response => {
         setProducts(response.data);
          const lowStockProducts = response.data.filter(product => product.stock <= 5);

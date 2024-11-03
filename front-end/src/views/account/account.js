@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Icon } from '@iconify/react';
 import { AuthContext } from '../../context/AuthContext';
+import apiUrl from '../../api/apiUrl';
 
 export default function Account() {
   const { user, login, logout } = useContext(AuthContext);
@@ -65,7 +66,7 @@ export default function Account() {
     setFieldErrors({});
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/login', {
+      const response = await fetch(`${apiUrl}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -119,7 +120,7 @@ export default function Account() {
     const { password_confirmation, ...dataToSend } = registrar;
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/api/client/register', {
+      const response = await fetch(`${apiUrl}/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

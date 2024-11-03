@@ -75,20 +75,31 @@ const AddUserModal = ({ show, handleClose, refreshUsers, editingUser, setEditing
     const endpoint = formData.role === 'client' ? 'client/register' : 'user/register';
 
     if (editingUser) {
-      axios.post(`${apiUrl}/client/update/${editingUser.id}`, data)
-        .then((response) => {
+      axios.post(`${apiUrl}/client/update/${editingUser?.id}`, data, {
+        headers: { 
+          'Content-Type': 'application/json', 
+          'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
+        }
+      })
+      .then((response) => {
+        console.log(response.data);
+         if(response.data.success) { // Cambiado a response.data.success para evitar error en la condición
           Swal.fire('Actualizado', 'El usuario ha sido actualizado correctamente.', 'success');
           handleClose();
           refreshUsers();
-        })
-        .catch((error) => {
+         } else {
+           Swal.fire('Error', 'No se pudo actualizar el usuario. Intenta de nuevo.', 'error');
+         }
+      })
+      .catch((error) => {
           const errorMessage = error.response?.data?.message || error.message;
           Swal.fire('Error', 'Hubo un problema al actualizar el usuario: ' + errorMessage, 'error');
-        });
+      });
     } else {
       axios.post(`${apiUrl}/${endpoint}`, data, {
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
         }
       })
       .then((response) => {
@@ -214,8 +225,13 @@ const ListUsersAdmin = () => {
   }, []);
 
   const fetchUsers = () => {
-    const fetchClients = axios.get(`${apiUrl}/client/users`);
-    const fetchAdmins = axios.get(`${apiUrl}/user/all`);
+    const fetchClients = axios.get(`${apiUrl}/client/users`, {
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+    });
+    
+    const fetchAdmins = axios.get(`${apiUrl}/user/all`, {
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+    });
 
     Promise.all([fetchClients, fetchAdmins])
       .then(([clientsResponse, adminsResponse]) => {
@@ -248,7 +264,9 @@ const ListUsersAdmin = () => {
   const handleCloseModal = () => setShowModal(false);
 
   const handleStatusChange = (id) => {
-    axios.post(`${apiUrl}/user/change-status/${id}`)
+    axios.post(`${apiUrl}/user/change-status/${id}`, {}, {
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('authToken')}` }
+    })
       .then(() => {
         Swal.fire('Actualizado', 'El estado del usuario ha sido actualizado.', 'success');
         fetchUsers();
