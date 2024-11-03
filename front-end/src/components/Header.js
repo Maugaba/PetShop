@@ -1,13 +1,31 @@
 import React, { useContext } from 'react';
 import Cart, { CartNumber } from './Cart';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
+import { Icon } from '@iconify/react';
+=======
 import { Icon } from '@iconify/react'; 
 import { AuthContext } from '../context/AuthContext';
+>>>>>>> 09186abc084479b99355541af6085263e57443f1
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
+<<<<<<< HEAD
+
+  useEffect(() => {
+    const userId = localStorage.getItem('id_user');
+    setIsAdmin(userId === '1');
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('id_user');
+    setIsAdmin(false);
+    navigate('/');
+  };
+=======
   const { isLogged, logout, user } = useContext(AuthContext);
+>>>>>>> 09186abc084479b99355541af6085263e57443f1
 
   return (
     <>
@@ -48,6 +66,11 @@ const Header = () => {
                     <li className="me-3">
                       <CartNumber />
                     </li>
+                    <li className="me-3">
+                      <Link to="/order-tracking" className="mx-3">
+                        <Icon icon="mdi:truck" className="fs-4" /> {/* Truck Icon */}
+                      </Link>
+                    </li>
                     <li>
                       {!isLogged ? (
                         <div className="d-flex">
@@ -67,7 +90,6 @@ const Header = () => {
                 </div>
               </div>
             </div>
-
           </nav>
         </div>
       </header>

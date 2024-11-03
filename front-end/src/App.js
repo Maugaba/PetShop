@@ -15,6 +15,8 @@ import Dashboard from './views/dashboard/dashboard';
 import Checkout from './views/checkout/checkout';
 import Account from './views/account/account';
 import ListUsersAdmin from './views/users/listUsersAdmin';
+import OrderTracking from './views/orderTracking/orderTracking'
+import OrderTrackingAdmin from './views/orderTracking/orderTrackingAdmin';
 
 import FAQComponent from './views/faq/faq';
 
@@ -52,7 +54,12 @@ function App() {
         <Route path="/contact" element={< ContactUs/>} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/administrator/users" element={<ListUsersAdmin />} />
+<<<<<<< HEAD
+        <Route path="/order-tracking" element={<OrderTracking />} />
+        <Route path="/administrator/orders" element={<OrderTrackingAdmin />} />
+=======
         <Route path="/account" element={<Account />} />
+>>>>>>> 09186abc084479b99355541af6085263e57443f1
         <Route path="/faq" element={<FAQComponent />} />
         <Route path="*" element={<ErrorPage />} /> 
       </Routes>

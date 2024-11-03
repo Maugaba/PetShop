@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
 import apiUrl from '../../api/apiUrl';
@@ -226,6 +226,7 @@ const ListCouponsAdmin = () => {
     axios
       .get(`${apiUrl}/coupons`)
       .then((response) => {
+        console.log("Coupons fetched:", response.data);
         setCoupons(response.data);
       })
       .catch((error) => {
@@ -263,7 +264,10 @@ const ListCouponsAdmin = () => {
             { name: 'Válido hasta', selector: (row) => row.valid_to, sortable: true },
             { 
               name: 'Estado', 
-              selector: row => row.state === 1 ? 'Activo' : 'Inactivo', 
+              selector: row => {
+                console.log("Row state:", row.is_active);
+                return row.is_active ? 'Activo' : 'Inactivo';
+              },
               sortable: true 
             },
             {
@@ -271,10 +275,10 @@ const ListCouponsAdmin = () => {
               cell: (row) => (
                 <div>
                   <Button variant="link" onClick={() => handleDeactivate(row.id, fetchCoupons)}>
-                    <FontAwesomeIcon icon={faTrashAlt} /> {/* Icono de basurero para eliminar */}
+                    <FontAwesomeIcon icon={faTrashAlt} />
                   </Button>
                   <Button variant="link" className="ms-2" onClick={() => handleEditCoupon(row)}>
-                    <FontAwesomeIcon icon={faEdit} /> {/* Icono de lápiz para editar */}
+                    <FontAwesomeIcon icon={faEdit} />
                   </Button>
                 </div>
               ),

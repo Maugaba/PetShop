@@ -96,7 +96,7 @@ const AddUserModal = ({ show, handleClose, refreshUsers, editingUser, setEditing
           Swal.fire('Error', 'Hubo un problema al actualizar el usuario: ' + errorMessage, 'error');
       });
     } else {
-      axios.post(`${apiUrl}/${endpoint}`, data, {
+      axios.put(`${apiUrl}/${endpoint}`, data, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
