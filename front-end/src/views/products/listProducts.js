@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import apiUrl from '../../api/apiUrl';
 import { useCart } from '../../context/CartContext';
+import { AuthContext } from '../../context/AuthContext';
 
 const BannerSection = () => {
   return (
@@ -21,19 +22,30 @@ const BannerSection = () => {
 
 const ListProducts = () => {
   const [products, setProducts] = useState([]);
+<<<<<<< HEAD
   const [categories, setCategories] = useState([]);
+=======
+  const [categories, setCategories] = useState([]); 
+>>>>>>> 09186abc084479b99355541af6085263e57443f1
   const [searchTerm, setSearchTerm] = useState('');
   const [priceRange, setPriceRange] = useState('Todos');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [sortOrder, setSortOrder] = useState('');
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true); 
+  const [successMessage, setSuccessMessage] = useState(''); 
+  const [errorMessage, setErrorMessage] = useState(''); 
 
   const { addToCart } = useCart();
+  const { user } = useContext(AuthContext); 
+  const navigate = useNavigate(); 
 
   useEffect(() => {
+    setLoading(true);
     fetch(apiUrl + '/products')
       .then(response => response.json())
       .then(data => {
+<<<<<<< HEAD
         const updatedProducts = data.map(product => {
           const price = parseFloat(product.price) || 0;
           let finalPrice = price;
@@ -47,10 +59,15 @@ const ListProducts = () => {
           return { ...product, price: price.toFixed(2), finalPrice: finalPrice.toFixed(2) };
         });
         setProducts(updatedProducts);
+=======
+        setProducts(data);
+        setLoading(false);
+>>>>>>> 09186abc084479b99355541af6085263e57443f1
       })
       .catch(error => {
         console.error('Error fetching products:', error);
         setError('Error al cargar los productos');
+        setLoading(false);
       });
   }, []);
 
@@ -63,6 +80,22 @@ const ListProducts = () => {
         setError('Error al cargar las categorías');
       });
   }, []);
+
+  const handleAddToCart = async (product) => {
+    if (!user) {
+      navigate('/account');
+    } else {
+      try {
+        await addToCart(product);
+        setSuccessMessage('Producto agregado al carrito');
+        // Limpiar el mensaje después de unos segundos
+        setTimeout(() => setSuccessMessage(''), 3000);
+      } catch (error) {
+        setErrorMessage('Error al agregar el producto al carrito');
+        setTimeout(() => setErrorMessage(''), 3000);
+      }
+    }
+  };
 
   const filteredProducts = products.filter(product => {
     return (
@@ -98,15 +131,17 @@ const ListProducts = () => {
         <div className="row flex-md-row-reverse g-md-5 mb-5">
           <main className="col-md-9">
             {error && <div className="alert alert-danger">{error}</div>}
+            {successMessage && <div className="alert alert-success">{successMessage}</div>}
+            {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
             <div className="filter-shop d-md-flex justify-content-between align-items-center">
               <div className="showing-product">
                 <p className="m-0">Mostrando {sortedProducts.length} productos</p>
               </div>
 
               <div className="sort-order">
-                <select 
-                  className="form-select" 
-                  onChange={(e) => setSortOrder(e.target.value)} 
+                <select
+                  className="form-select"
+                  onChange={(e) => setSortOrder(e.target.value)}
                   value={sortOrder}
                 >
                   <option value="">Ordenar por</option>
@@ -117,6 +152,7 @@ const ListProducts = () => {
                 </select>
               </div>
             </div>
+<<<<<<< HEAD
             <div className="product-grid row">
               {sortedProducts.map((product) => (
                 <div className="col-md-4 my-4" key={product.id}>
@@ -139,9 +175,33 @@ const ListProducts = () => {
                       />
                     </Link>
                     <div className="card-body p-0">
+=======
+            {loading ? (
+              <p>Cargando productos...</p>
+            ) : (
+              <div className="product-grid row">
+                {sortedProducts.map((product) => (
+                  <div className="col-md-4 my-4" key={product.id}>
+                    <div
+                      className="card position-relative"
+                      style={{ height: '100%', width: '100%' }}
+                    >
+>>>>>>> 09186abc084479b99355541af6085263e57443f1
                       <Link to={`/product/${product.id}`}>
-                        <h3 className="card-title pt-4 m-0">{product.name}</h3>
+                        <img
+                          src={`http://localhost:8000/images/${product.images}`}
+                          className="img-fluid"
+                          alt={product.name}
+                          style={{
+                            width: '100%',
+                            height: '300px',
+                            objectFit: 'cover',
+                            borderRadius: '0'
+                          }}
+                          onError={(e) => e.target.src = '/images/not-found.jpeg'}
+                        />
                       </Link>
+<<<<<<< HEAD
                       <div className="card-text">
                         {product.discount > 0 ? (
                           <h3 className="secondary-font text-primary">
@@ -157,13 +217,29 @@ const ListProducts = () => {
                           >
                             <h5 className="text-uppercase m-0">Añadir al carrito</h5>
                           </button>
+=======
+                      <div className="card-body p-0">
+                        <Link to={`/product/${product.id}`}>
+                          <h3 className="card-title pt-4 m-0">{product.name}</h3>
+                        </Link>
+                        <div className="card-text">
+                          <h3 className="secondary-font text-primary">Q{product.price}</h3>
+                          <div className="d-flex flex-wrap mt-3">
+                            <button
+                              className="btn-cart me-3 px-4 pt-3 pb-3"
+                              onClick={() => handleAddToCart(product)}
+                            >
+                              <h5 className="text-uppercase m-0">Añadir al carrito</h5>
+                            </button>
+                          </div>
+>>>>>>> 09186abc084479b99355541af6085263e57443f1
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </main>
 
           <aside className="col-md-3 mt-5">
@@ -171,10 +247,10 @@ const ListProducts = () => {
               <div className="widget-search-bar">
                 <div className="search-bar border rounded-2 border-dark-subtle pe-3">
                   <form id="search-form" className="text-center d-flex align-items-center">
-                    <input 
-                      type="text" 
-                      className="form-control border-0 bg-transparent" 
-                      placeholder="Buscar por producto" 
+                    <input
+                      type="text"
+                      className="form-control border-0 bg-transparent"
+                      placeholder="Buscar por producto"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -189,21 +265,21 @@ const ListProducts = () => {
                 <h4 className="widget-title">Categorías</h4>
                 <ul className="product-categories sidebar-list list-unstyled">
                   <li className={`cat-item ${selectedCategory === '' ? 'selected' : ''}`} key="">
-                    <Link 
-                      to="#" 
-                      onClick={() => setSelectedCategory('')} 
+                    <Link
+                      to="#"
+                      onClick={() => setSelectedCategory('')}
                       style={{ textDecoration: selectedCategory === '' ? 'underline' : 'none' }}
                     >
                       Todas
                     </Link>
                   </li>
                   {categories.map(category => (
-                    <li 
-                      className={`cat-item ${selectedCategory === category.id ? 'selected' : ''}`} 
+                    <li
+                      className={`cat-item ${selectedCategory === category.id ? 'selected' : ''}`}
                       key={category.id}
                     >
-                      <Link 
-                        to="#" 
+                      <Link
+                        to="#"
                         onClick={() => setSelectedCategory(category.id)}
                         style={{ textDecoration: selectedCategory === category.id ? 'underline' : 'none' }}
                       >
@@ -220,9 +296,9 @@ const ListProducts = () => {
                   {['Todos', 'Menos de Q10', 'Q10 - Q20', 'Q20 - Q30', 'Q30 - Q40', 'Mas de Q40']
                     .map((range) => (
                       <li className={`tags-item ${priceRange === range ? 'selected' : ''}`} key={range}>
-                        <Link 
-                          to="#" 
-                          onClick={() => setPriceRange(range)} 
+                        <Link
+                          to="#"
+                          onClick={() => setPriceRange(range)}
                           style={{ textDecoration: priceRange === range ? 'underline' : 'none' }}
                         >
                           {range}

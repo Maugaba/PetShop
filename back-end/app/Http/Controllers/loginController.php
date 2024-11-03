@@ -14,27 +14,30 @@ class loginController extends Controller
     public function login(Request $request)
     {
         try {
-            // Validar las credenciales
             $request->validate([
                 'email' => 'required|email',
                 'password' => 'required',
             ]);
-
+    
             $credentials = $request->only('email', 'password');
-
+    
             if (Auth::attempt($credentials)) {
                 $user = Auth::user();
+                $token = $user->createToken('auth_token')->plainTextToken;
+    
                 $response = [
                     'id' => $user->id,
                     'email' => $user->email,
                     'role_id' => $user->role_id,
+                    'name' => $user->name,
+                    'token' => $token,
                 ];
-
+    
                 return response()->json($response, 200);
             }
-
+    
             return response()->json(['error' => 'Correo o contraseña incorrectos'], 401);
-
+    
         } catch (\Illuminate\Database\QueryException $e) {
             return response()->json(['message' => 'Error de base de datos', 'error' => $e->getMessage()], 500);
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -43,6 +46,7 @@ class loginController extends Controller
             return response()->json(['message' => 'Error inesperado', 'error' => $e->getMessage()], 500);
         }
     }
+    
 
     // Cerrar sesión
     public function logout(Request $request)

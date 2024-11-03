@@ -1,12 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import Cart, { CartNumber } from './Cart';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+<<<<<<< HEAD
 import { Icon } from '@iconify/react';
+=======
+import { Icon } from '@iconify/react'; 
+import { AuthContext } from '../context/AuthContext';
+>>>>>>> 09186abc084479b99355541af6085263e57443f1
 
 const Header = () => {
   const location = useLocation();
-  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
+<<<<<<< HEAD
 
   useEffect(() => {
     const userId = localStorage.getItem('id_user');
@@ -18,6 +23,9 @@ const Header = () => {
     setIsAdmin(false);
     navigate('/');
   };
+=======
+  const { isLogged, logout, user } = useContext(AuthContext);
+>>>>>>> 09186abc084479b99355541af6085263e57443f1
 
   return (
     <>
@@ -29,8 +37,8 @@ const Header = () => {
               <div className="offcanvas-body justify-content-between">
                 <div className="d-none d-lg-flex align-items-start align-items-center">
                   <div className="main-logo">
-                    <a href="index.html">
-                      <img src="/images/LogoV2.png" alt="logo" className="img-fluid" style={{ height: '65px', width: '150px' }} />
+                    <a href="/">
+                      <img src="/images/LogoV2.png" alt="logo" className="img-fluid" style={{ height: '100px', width: '250px' }} />
                     </a>
                   </div>
                 </div>  
@@ -64,17 +72,20 @@ const Header = () => {
                       </Link>
                     </li>
                     <li>
-                      {isAdmin ? (
+                      {!isLogged ? (
                         <div className="d-flex">
-                          <button className="btn btn-primary btn-sm me-2" onClick={() => navigate('/administrator/dashboard')}>Administrador</button>
-                          <button className="btn btn-danger btn-sm" onClick={handleLogout}>Cerrar Sesión</button>
+                          <button className="btn btn-primary btn-sm me-2" onClick={() => navigate('/account')}>Iniciar sesión</button>
                         </div>
                       ) : (
                         <div className="d-flex">
-                          <button className="btn btn-primary btn-sm me-2" onClick={() => navigate('/login')}>Iniciar sesion</button>
+                          {user?.role_id === 1 && (
+                            <button className="btn btn-primary btn-sm me-2" onClick={() => navigate('/administrator/dashboard')}>Administrador</button>
+                          )}
+                          <button className="btn btn-danger btn-sm" onClick={logout}>Cerrar Sesión</button>
                         </div>
                       )}
                     </li>
+
                   </ul>
                 </div>
               </div>

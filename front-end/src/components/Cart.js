@@ -1,15 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { Icon } from '@iconify/react'; 
+import { Icon } from '@iconify/react';
 
 const Cart = () => {
-  const { cart, updateQuantity } = useCart();
+  const { cart, updateQuantity, removeFromCart } = useCart();
   const navigate = useNavigate();
 
   const handleQuantityChange = (e, productId) => {
     const newQuantity = parseInt(e.target.value, 10);
-    updateQuantity(productId, newQuantity);
+    if (newQuantity > 0) {
+      updateQuantity(productId, newQuantity);
+    } else {
+      removeFromCart(productId);
+    }
   };
 
   const updatedTotal = cart.reduce((acc, item) => acc + (parseFloat(item.price) * item.quantity || 0), 0);
@@ -17,7 +21,6 @@ const Cart = () => {
   const handleCheckout = (e) => {
     e.preventDefault();
     
-    // Navega a la vista de checkout con el carrito y el total actualizados
     navigate('/checkout', { state: { cart, total: updatedTotal } });
   };
 
@@ -37,7 +40,8 @@ const Cart = () => {
               <li className="list-group-item d-flex justify-content-between lh-sm" key={index}>
                 <div>
                   <h6 className="my-0">{item.name}</h6>
-                  <small className="text-body-secondary">Cantidad: 
+                  <small className="text-body-secondary">
+                    Cantidad: 
                     <input 
                       type="number" 
                       value={item.quantity} 
@@ -45,6 +49,12 @@ const Cart = () => {
                       onChange={(e) => handleQuantityChange(e, item.id)} 
                       style={{ width: '50px', marginLeft: '10px' }}
                     />
+                    <button 
+                      className="btn btn-link text-danger p-0 ms-2" 
+                      onClick={() => removeFromCart(item.id)}
+                    >
+                      Eliminar
+                    </button>
                   </small>
                 </div>
                 <span className="text-body-secondary">Q{(item.price * item.quantity).toFixed(2)}</span>
@@ -57,13 +67,6 @@ const Cart = () => {
           </ul>
 
           <form onSubmit={handleCheckout}>
-            {cart.map(item => (
-              <React.Fragment key={item.id}>
-                <input type="hidden" name={`products[${item.id}][id]`} value={item.id} />
-                <input type="hidden" name={`products[${item.id}][name]`} value={item.name} />
-                <input type="hidden" name={`products[${item.id}][quantity]`} value={item.quantity} />
-              </React.Fragment>
-            ))}
             <div className="d-grid">
               <button 
                 className="w-100 btn btn-primary btn-lg" 
