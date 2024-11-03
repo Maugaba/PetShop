@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Cart, { CartNumber } from './Cart';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Icon } from '@iconify/react'; 
+import { Icon } from '@iconify/react';
 
 const Header = () => {
   const location = useLocation();
@@ -12,8 +12,6 @@ const Header = () => {
     const userId = localStorage.getItem('id_user');
     setIsAdmin(userId === '1');
   }, []);
-
-
 
   const handleLogout = () => {
     localStorage.removeItem('id_user');
@@ -60,6 +58,11 @@ const Header = () => {
                     <li className="me-3">
                       <CartNumber />
                     </li>
+                    <li className="me-3">
+                      <Link to="/order-tracking" className="mx-3">
+                        <Icon icon="mdi:truck" className="fs-4" /> {/* Truck Icon */}
+                      </Link>
+                    </li>
                     <li>
                       {isAdmin ? (
                         <div className="d-flex">
@@ -76,7 +79,6 @@ const Header = () => {
                 </div>
               </div>
             </div>
-
           </nav>
         </div>
       </header>

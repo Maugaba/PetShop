@@ -152,48 +152,57 @@ class loginController extends Controller
 
     // Actualizar un usuario existente
     public function update(Request $request, $id)
-    {
-        try {
-            // Buscar el usuario
-            $usuario = Users::find($id);
+{
+    try {
+        \Log::info('Datos recibidos para la actualización:', $request->all());
 
-            if (!$usuario) {
-                return response()->json(['message' => 'Usuario no encontrado'], 404);
-            }
+        // Encuentra el usuario por ID
+        $usuario = Users::find($id);
 
-            // Validar los datos del request
-            $request->validate([
-                'name' => 'required|string|max:255',
-                'phone' => 'required|string|max:15',
-                'address' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users,email,'.$usuario->id,
-                'password' => 'nullable|string|min:8',  // La contraseña es opcional
-            ]);
-            \Log::info('Datos recibidos en la actualización:', $request->all());
-            // Actualizar los datos del usuario
-            $usuario->name = $request->name;
-            $usuario->phone = $request->phone;
-            $usuario->address = $request->address;
-            $usuario->email = $request->email;
-
-            // Solo actualizar la contraseña si se proporciona
-            if ($request->filled('password')) {
-                $usuario->password = Hash::make($request->password);
-            }
-
-            // Guardar los cambios
-            $usuario->save();
-
-            return response()->json(['success' => 'Usuario actualizado correctamente', 'usuario' => $usuario], 200);
-
-        } catch (\Illuminate\Database\QueryException $e) {
-            return response()->json(['message' => 'Error de base de datos al actualizar el usuario', 'error' => $e->getMessage()], 500);
-        } catch (\Illuminate\Validation\ValidationException $e) {
-            return response()->json(['message' => 'Error de validación', 'errors' => $e->errors()], 422);
-        } catch (\Exception $e) {
-            return response()->json(['message' => 'Error inesperado al actualizar el usuario', 'error' => $e->getMessage()], 500);
+        if (!$usuario) {
+            \Log::error("Usuario con ID {$id} no encontrado");
+            return response()->json(['message' => 'Usuario no encontrado'], 404);
         }
+
+        // Validación de los datos recibidos
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:15',
+            'address' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,'.$usuario->id,
+            'password' => 'nullable|string|min:8',  // La contraseña es opcional
+        ]);
+
+        // Actualiza los datos del usuario
+        $usuario->name = $request->name;
+        $usuario->phone = $request->phone;
+        $usuario->address = $request->address;
+        $usuario->email = $request->email;
+
+        // Solo actualiza la contraseña si se proporciona
+        if ($request->filled('password')) {
+            $usuario->password = Hash::make($request->password);
+            \Log::info('Contraseña actualizada para el usuario');
+        }
+
+        // Guarda los cambios en la base de datos
+        if ($usuario->save()) {
+            \Log::info('Usuario actualizado exitosamente:', ['usuario' => $usuario]);
+            return response()->json(['success' => 'Usuario actualizado correctamente', 'usuario' => $usuario], 200);
+        } else {
+            \Log::error('Error al guardar el usuario');
+            return response()->json(['message' => 'Error al guardar el usuario'], 500);
+        }
+
+    } catch (\Illuminate\Database\QueryException $e) {
+        \Log::error('Error de base de datos al actualizar el usuario', ['error' => $e->getMessage()]);
+        return response()->json(['message' => 'Error de base de datos', 'error' => $e->getMessage()], 500);
+    } catch (\Exception $e) {
+        \Log::error('Error inesperado al actualizar el usuario', ['error' => $e->getMessage()]);
+        return response()->json(['message' => 'Error inesperado al actualizar el usuario', 'error' => $e->getMessage()], 500);
     }
+}
+
 
     // Cambiar el estado activo/inactivo de un usuario
     public function changeStatus($id)

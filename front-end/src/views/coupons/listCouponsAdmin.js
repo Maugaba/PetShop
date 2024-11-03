@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
 import apiUrl from '../../api/apiUrl';
@@ -70,7 +70,6 @@ const AddCouponModal = ({ show, handleClose, refreshCoupons, editingCoupon, setE
     };
 
     if (editingCoupon) {
-      // Actualizar cupón existente
       axios.post(`${apiUrl}/coupons/${editingCoupon.id}`, formattedData)
         .then((response) => {
           Swal.fire('Actualizado', 'El cupón ha sido actualizado exitosamente.', 'success');
@@ -82,7 +81,6 @@ const AddCouponModal = ({ show, handleClose, refreshCoupons, editingCoupon, setE
           Swal.fire('Error', 'Hubo un problema al actualizar el cupón: ' + error.message, 'error');
         });
     } else {
-      // Crear nuevo cupón
       axios.post(`${apiUrl}/coupons`, formattedData)
         .then((response) => {
           Swal.fire('Creado', 'El cupón ha sido creado exitosamente.', 'success');
@@ -220,6 +218,7 @@ const ListCouponsAdmin = () => {
     axios
       .get(`${apiUrl}/coupons`)
       .then((response) => {
+        console.log("Coupons fetched:", response.data);
         setCoupons(response.data);
       })
       .catch((error) => {
@@ -257,7 +256,10 @@ const ListCouponsAdmin = () => {
             { name: 'Válido hasta', selector: (row) => row.valid_to, sortable: true },
             { 
               name: 'Estado', 
-              selector: row => row.state === 1 ? 'Activo' : 'Inactivo', 
+              selector: row => {
+                console.log("Row state:", row.is_active);
+                return row.is_active ? 'Activo' : 'Inactivo';
+              },
               sortable: true 
             },
             {
@@ -265,10 +267,10 @@ const ListCouponsAdmin = () => {
               cell: (row) => (
                 <div>
                   <Button variant="link" onClick={() => handleDeactivate(row.id, fetchCoupons)}>
-                    <FontAwesomeIcon icon={faTrashAlt} /> {/* Icono de basurero para eliminar */}
+                    <FontAwesomeIcon icon={faTrashAlt} />
                   </Button>
                   <Button variant="link" className="ms-2" onClick={() => handleEditCoupon(row)}>
-                    <FontAwesomeIcon icon={faEdit} /> {/* Icono de lápiz para editar */}
+                    <FontAwesomeIcon icon={faEdit} />
                   </Button>
                 </div>
               ),

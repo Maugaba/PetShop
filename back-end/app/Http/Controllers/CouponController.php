@@ -10,9 +10,10 @@ class CouponController extends Controller
     // Mostrar todos los cupones
     public function index()
     {
-        $coupons = Coupon::all();
+        $coupons = Coupon::where('is_active', true)->get();
         return response()->json($coupons);
     }
+    
 
     // Crear un nuevo cupón
     public function store(Request $request)

@@ -15,6 +15,17 @@ class ProductController extends Controller
         foreach ($products as $product) {
             $product_category_name = ProductCategory::find($product->product_categorie_id);
             $product->product_category = $product_category_name->name;
+            
+            // Calcular el precio final con descuento si aplica
+            if ($product->discount) {
+                if ($product->discount_type === 'percentage') {
+                    $product->final_price = $product->price * (1 - $product->discount / 100);
+                } else if ($product->discount_type === 'fixed') {
+                    $product->final_price = $product->price - $product->discount;
+                }
+            } else {
+                $product->final_price = $product->price;
+            }
         }
         return response()->json($products);
     }

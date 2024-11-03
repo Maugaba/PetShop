@@ -35,12 +35,14 @@ const AddProductModal = ({ show, handleClose, refreshProducts, editingProduct, s
     stock: '',
     price: '',
     discount: '',
-    category: ''
+    category: '',
+    couponCode: ''
   });
+  const [coupons, setCoupons] = useState([]);
+  const [finalPrice, setFinalPrice] = useState(null);
 
   useEffect(() => {
     if (editingProduct) {
-      console.log(editingProduct);
       setFormData({
         name: editingProduct.name,
         description: editingProduct.description,
@@ -50,8 +52,10 @@ const AddProductModal = ({ show, handleClose, refreshProducts, editingProduct, s
         discount: editingProduct.discount,
         category: editingProduct.product_categorie_id,
         images: [],
-        videos: []
+        videos: [],
+        couponCode: ''
       });
+      setFinalPrice(editingProduct.price);
     } else {
       setFormData({
         name: '',
@@ -62,10 +66,39 @@ const AddProductModal = ({ show, handleClose, refreshProducts, editingProduct, s
         stock: '',
         price: '',
         discount: '',
-        category: ''
+        category: '',
+        couponCode: ''
       });
+      setFinalPrice(null);
     }
   }, [editingProduct]);
+
+  useEffect(() => {
+    axios.get(`${apiUrl}/coupons`)
+      .then(response => setCoupons(response.data))
+      .catch(error => console.error('Error fetching coupons:', error));
+  }, []);
+
+  useEffect(() => {
+    if (formData.price && formData.couponCode) {
+      const selectedCoupon = coupons.find(coupon => coupon.code === formData.couponCode);
+      if (selectedCoupon) {
+        let discountAmount = 0;
+        const price = parseFloat(formData.price) || 0;
+        if (selectedCoupon.discount_type === 'percentage') {
+          discountAmount = price * (selectedCoupon.discount_amount / 100);
+          setFormData(prevData => ({ ...prevData, discount: selectedCoupon.discount_amount }));
+        } else if (selectedCoupon.discount_type === 'fixed') {
+          discountAmount = selectedCoupon.discount_amount;
+          setFormData(prevData => ({ ...prevData, discount: selectedCoupon.discount_amount }));
+        }
+        setFinalPrice(price - discountAmount);
+      }
+    } else {
+      setFinalPrice(parseFloat(formData.price) || 0);
+      setFormData(prevData => ({ ...prevData, discount: '' }));
+    }
+  }, [formData.price, formData.couponCode, coupons]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -95,49 +128,21 @@ const AddProductModal = ({ show, handleClose, refreshProducts, editingProduct, s
     formDataSend.append('category', formData.category);
 
     if (formData.images.length > 0) {
-      formData.images.forEach((image) => {
-        formDataSend.append('images[]', image);
-      });
+      formData.images.forEach((image) => formDataSend.append('images[]', image));
     }
-
     if (formData.videos.length > 0) {
-      formData.videos.forEach((video) => {
-        formDataSend.append('videos[]', video);
-      });
+      formData.videos.forEach((video) => formDataSend.append('videos[]', video));
     }
 
-    if (editingProduct) {
-      // Actualizar producto existente
-      axios.post(`${apiUrl}/products/${editingProduct.id}`, formDataSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      .then((response) => {
-        Swal.fire('Actualizado', 'El producto ha sido actualizado exitosamente.', 'success');
+    const apiUrlWithId = editingProduct ? `${apiUrl}/products/${editingProduct.id}` : `${apiUrl}/products`;
+    axios.post(apiUrlWithId, formDataSend, { headers: { 'Content-Type': 'multipart/form-data' } })
+      .then(() => {
+        Swal.fire(editingProduct ? 'Actualizado' : 'Creado', `El producto ha sido ${editingProduct ? 'actualizado' : 'creado'} exitosamente.`, 'success');
         handleClose();
         setEditingProduct(null);
         refreshProducts();
       })
-      .catch((error) => {
-        Swal.fire('Error', 'Hubo un problema al actualizar el producto: ' + error.message, 'error');
-      });
-    } else {
-      // Crear nuevo producto
-      axios.post(`${apiUrl}/products`, formDataSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      .then((response) => {
-        Swal.fire('Creado', 'El producto ha sido creado exitosamente.', 'success');
-        handleClose();
-        refreshProducts();
-      })
-      .catch((error) => {
-        Swal.fire('Error', 'Hubo un problema al crear el producto: ' + error.message, 'error');
-      });
-    }
+      .catch((error) => Swal.fire('Error', `Hubo un problema: ${error.message}`, 'error'));
   };
 
   const [categories, setCategories] = useState([]);
@@ -268,11 +273,11 @@ const AddProductModal = ({ show, handleClose, refreshProducts, editingProduct, s
               <Form.Group controlId="formProductDiscount">
                 <Form.Label>Descuento</Form.Label>
                 <Form.Control
-                  type="number"
+                  type="text"
                   name="discount"
                   value={formData.discount}
-                  onChange={handleChange}
-                  placeholder="Descuento en porcentaje (si tiene)"
+                  placeholder="Descuento calculado"
+                  readOnly
                 />
               </Form.Group>
             </Col>
@@ -287,6 +292,44 @@ const AddProductModal = ({ show, handleClose, refreshProducts, editingProduct, s
                     </option>
                   ))}
                 </Form.Control>
+              </Form.Group>
+            </Col>
+          </Row>
+          <br />
+          <Row>
+            <Col md={6}>
+              <Form.Group controlId="formProductCoupon">
+                <Form.Label>Código de Cupón</Form.Label>
+                <Form.Control
+                  as="select"
+                  name="couponCode"
+                  value={formData.couponCode}
+                  onChange={handleChange}
+                >
+                  <option value="">Selecciona un cupón</option>
+                  {coupons.map(coupon => (
+                    <option key={coupon.id} value={coupon.code}>
+                      {coupon.code} ({coupon.discount_type === 'percentage' ? `${coupon.discount_amount}%` : `Q${coupon.discount_amount}`})
+                    </option>
+                  ))}
+                </Form.Control>
+              </Form.Group>
+            </Col>
+            <Col md={6}>
+              <Form.Group controlId="formProductFinalPrice">
+                <Form.Label>Precio Final</Form.Label>
+                <div>
+                  {finalPrice && finalPrice < parseFloat(formData.price) ? (
+                    <>
+                      <span style={{ textDecoration: 'line-through', marginRight: '10px' }}>
+                        Q{parseFloat(formData.price).toFixed(2)}
+                      </span>
+                      <span style={{ color: '#b08b57' }}>Q{finalPrice.toFixed(2)}</span>
+                    </>
+                  ) : (
+                    <span>Q{parseFloat(formData.price || 0).toFixed(2)}</span>
+                  )}
+                </div>
               </Form.Group>
             </Col>
           </Row>
@@ -336,17 +379,29 @@ const ListProductsAdmin = () => {
   const fetchProducts = () => {
     axios.get(`${apiUrl}/products`)
       .then(response => {
-        setProducts(response.data);
-         const lowStockProducts = response.data.filter(product => product.stock <= 5);
-          if (lowStockProducts.length > 0) {
-            Swal.fire({
-              title: 'Stock bajo',
-              text: 'Algunos productos tienen stock bajo',
-              icon: 'warning',
-              confirmButtonText: 'Aceptar'
-            });
+        const updatedProducts = response.data.map(product => {
+          const price = parseFloat(product.price) || 0;
+          let finalPrice = price;
+
+          if (product.discount && product.discount > 0) {
+            finalPrice = price - (product.discount_type === 'percentage' 
+              ? (price * (product.discount / 100)) 
+              : product.discount);
           }
-        })
+
+          return { ...product, price: price.toFixed(2), finalPrice: finalPrice.toFixed(2) };
+        });
+        setProducts(updatedProducts);
+        const lowStockProducts = updatedProducts.filter(product => product.stock <= 5);
+        if (lowStockProducts.length > 0) {
+          Swal.fire({
+            title: 'Stock bajo',
+            text: 'Algunos productos tienen stock bajo',
+            icon: 'warning',
+            confirmButtonText: 'Aceptar'
+          });
+        }
+      })
       .catch(error => {
         console.error('Error fetching products:', error);
       });
@@ -388,6 +443,7 @@ const ListProductsAdmin = () => {
               ),
             },
             { name: 'Precio', selector: row => row.price, sortable: true },
+            { name: 'Precio Final', selector: row => row.finalPrice, sortable: true },
             { name: 'Descuento', selector: row => row.discount, sortable: true },
             { name: 'Categoría', selector: row => row.product_category, sortable: true },
             { name: 'Estado', selector: row => row.state ? 'Activo' : 'Inactivo', sortable: true },
@@ -420,7 +476,3 @@ const ListProductsAdmin = () => {
 }
 
 export default ListProductsAdmin;
-
-
-
-

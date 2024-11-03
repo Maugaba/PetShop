@@ -17,11 +17,11 @@ const BannerSection = () => {
       </div>
     </section>
   );
-}
+};
 
 const ListProducts = () => {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);  // Estado para las categorías
+  const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [priceRange, setPriceRange] = useState('Todos');
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -33,16 +33,29 @@ const ListProducts = () => {
   useEffect(() => {
     fetch(apiUrl + '/products')
       .then(response => response.json())
-      .then(data => setProducts(data))
+      .then(data => {
+        const updatedProducts = data.map(product => {
+          const price = parseFloat(product.price) || 0;
+          let finalPrice = price;
+
+          if (product.discount && product.discount > 0) {
+            finalPrice = price - (product.discount_type === 'percentage' 
+              ? (price * (product.discount / 100)) 
+              : product.discount);
+          }
+
+          return { ...product, price: price.toFixed(2), finalPrice: finalPrice.toFixed(2) };
+        });
+        setProducts(updatedProducts);
+      })
       .catch(error => {
         console.error('Error fetching products:', error);
         setError('Error al cargar los productos');
       });
   }, []);
 
-  
   useEffect(() => {
-    fetch(apiUrl + '/categories/') 
+    fetch(apiUrl + '/categories/')
       .then(response => response.json())
       .then(data => setCategories(data))
       .catch(error => {
@@ -56,11 +69,11 @@ const ListProducts = () => {
       product.state === 1 &&
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
       (selectedCategory ? product.product_categorie_id === parseInt(selectedCategory) : true) &&
-      (priceRange === "Menos de Q10" ? product.price < 10 :
-       priceRange === "Q10 - Q20" ? product.price >= 10 && product.price <= 20 :
-       priceRange === "Q20 - Q30" ? product.price > 20 && product.price <= 30 :
-       priceRange === "Q30 - Q40" ? product.price > 30 && product.price <= 40 :
-       priceRange === "Mas de Q40" ? product.price > 40 :
+      (priceRange === "Menos de Q10" ? product.finalPrice < 10 :
+       priceRange === "Q10 - Q20" ? product.finalPrice >= 10 && product.finalPrice <= 20 :
+       priceRange === "Q20 - Q30" ? product.finalPrice > 20 && product.finalPrice <= 30 :
+       priceRange === "Q30 - Q40" ? product.finalPrice > 30 && product.finalPrice <= 40 :
+       priceRange === "Mas de Q40" ? product.finalPrice > 40 :
        priceRange === "Todos" ? true : true)
     );
   });
@@ -71,9 +84,9 @@ const ListProducts = () => {
     } else if (sortOrder === 'name-desc') {
       return b.name.localeCompare(a.name);
     } else if (sortOrder === 'price-asc') {
-      return a.price - b.price;
+      return a.finalPrice - b.finalPrice;
     } else if (sortOrder === 'price-desc') {
-      return b.price - a.price;
+      return b.finalPrice - a.finalPrice;
     }
     return 0;
   });
@@ -121,7 +134,8 @@ const ListProducts = () => {
                           height: '300px', 
                           objectFit: 'cover', 
                           borderRadius: '0'   
-                        }}onError={(e) => e.target.src = '/images/not-found.jpeg'} 
+                        }}
+                        onError={(e) => e.target.src = '/images/not-found.jpeg'} 
                       />
                     </Link>
                     <div className="card-body p-0">
@@ -129,7 +143,13 @@ const ListProducts = () => {
                         <h3 className="card-title pt-4 m-0">{product.name}</h3>
                       </Link>
                       <div className="card-text">
-                        <h3 className="secondary-font text-primary">Q{product.price}</h3>
+                        {product.discount > 0 ? (
+                          <h3 className="secondary-font text-primary">
+                            <del className="text-muted">Q{product.price}</del> <span style={{ color: '#b08b57' }}>Q{product.finalPrice}</span>
+                          </h3>
+                        ) : (
+                          <h3 className="secondary-font text-primary">Q{product.price}</h3>
+                        )}
                         <div className="d-flex flex-wrap mt-3">
                           <button 
                             className="btn-cart me-3 px-4 pt-3 pb-3"
@@ -168,7 +188,6 @@ const ListProducts = () => {
               <div className="widget-product-categories pt-5">
                 <h4 className="widget-title">Categorías</h4>
                 <ul className="product-categories sidebar-list list-unstyled">
-                  {/* Mapear las categorías desde la API */}
                   <li className={`cat-item ${selectedCategory === '' ? 'selected' : ''}`} key="">
                     <Link 
                       to="#" 

@@ -75,7 +75,7 @@ const AddUserModal = ({ show, handleClose, refreshUsers, editingUser, setEditing
     const endpoint = formData.role === 'client' ? 'client/register' : 'user/register';
 
     if (editingUser) {
-      axios.post(`${apiUrl}/client/update/${editingUser.id}`, data)
+      axios.put(`${apiUrl}/client/update/${editingUser.id}`, data)
         .then((response) => {
           Swal.fire('Actualizado', 'El usuario ha sido actualizado correctamente.', 'success');
           handleClose();
@@ -86,7 +86,7 @@ const AddUserModal = ({ show, handleClose, refreshUsers, editingUser, setEditing
           Swal.fire('Error', 'Hubo un problema al actualizar el usuario: ' + errorMessage, 'error');
         });
     } else {
-      axios.post(`${apiUrl}/${endpoint}`, data, {
+      axios.put(`${apiUrl}/${endpoint}`, data, {
         headers: {
           'Content-Type': 'application/json',
         }

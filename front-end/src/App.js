@@ -15,6 +15,8 @@ import ContactUs from './views/contact/contact';
 import Checkout from './views/checkout/checkout';
 
 import ListUsersAdmin from './views/users/listUsersAdmin';
+import OrderTracking from './views/orderTracking/orderTracking'
+import OrderTrackingAdmin from './views/orderTracking/orderTrackingAdmin';
 
 import FAQComponent from './views/faq/faq';
 
@@ -52,6 +54,8 @@ function App() {
         <Route path="/contact" element={< ContactUs/>} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/administrator/users" element={<ListUsersAdmin />} />
+        <Route path="/order-tracking" element={<OrderTracking />} />
+        <Route path="/administrator/orders" element={<OrderTrackingAdmin />} />
         <Route path="/faq" element={<FAQComponent />} />
         <Route path="*" element={<ErrorPage />} /> 
       </Routes>
