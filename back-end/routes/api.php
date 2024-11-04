@@ -37,8 +37,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/orders', 'App\Http\Controllers\OrderController@get_orders')->name('order.get_orders');
     
 
-
-
     Route::middleware('admin')->group(function () {
 
         Route::prefix('user')->group(function () {
@@ -70,7 +68,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', 'App\Http\Controllers\RolesController@index')->name('roles.index');
             Route::post('/', 'App\Http\Controllers\RolesController@store')->name('roles.store');
         });
-        
     });
 });
 Route::get('/all-orders', 'App\Http\Controllers\OrderController@getAllOrders')->name('orders.all');

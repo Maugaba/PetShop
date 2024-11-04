@@ -117,7 +117,7 @@ const Footer = () => {
         </div>
       </div>
 
-      {/* Estilos CSS añadidos directamente en el componente */}
+      {}
       <style>{`
         .footer-menu .menu-item {
           margin-bottom: 10px;
