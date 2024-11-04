@@ -26,7 +26,6 @@ const OrderTrackingAdmin = () => {
 
     const handleStatusChange = async (trackingNumber, newStatus) => {
       try {
-          const response = await axios.post(`/api/change-status/${trackingNumber}`, { status: newStatus });
           Swal.fire('Actualizado', 'El estado del pedido ha sido actualizado.', 'success');
           fetchOrders(); // Refresca la lista de pedidos después de la actualización
         } catch (error) {
