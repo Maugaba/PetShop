@@ -25,14 +25,16 @@ const OrderTrackingAdmin = () => {
     };
 
     const handleStatusChange = async (trackingNumber, newStatus) => {
-      try {
-          Swal.fire('Actualizado', 'El estado del pedido ha sido actualizado.', 'success');
-          fetchOrders(); // Refresca la lista de pedidos después de la actualización
+        try {
+            const response = await axios.post(`/api/change-status/${trackingNumber}`, { status: newStatus });
+            Swal.fire('Actualizado', 'El estado del pedido ha sido actualizado.', 'success');
+            fetchOrders(); // Refresca la lista de pedidos después de la actualización
         } catch (error) {
             console.error("Error al actualizar el estado:", error.response ? error.response.data : error.message);
             Swal.fire('Error', `Hubo un problema al actualizar el estado: ${error.response ? error.response.data.message : error.message}`, 'error');
         }
     };
+    
   
     const getStatusIcon = (status, isActive, onClick) => {
         const iconProps = {
