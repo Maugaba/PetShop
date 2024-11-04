@@ -16,13 +16,20 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
 
-class orderController extends Controller
+class OrderController extends Controller
 {
     // Store data
     public function store(Request $request)
     {
         try{
             DB::beginTransaction();
+            $Transaccion_id = "";
+            if($request->paymentMethod == "Pago Contra Entrega"){
+                //CTE mas un numero al azar
+                $Transaccion_id = "CTE".rand(1000,9999);
+            }else{
+                $Transaccion_id = $request->transactionNumber;
+            }
             $Purchase_Cart = new Purchase_Cart();
             $Purchase_Cart->total = $request->total;
             $Purchase_Cart->save();
@@ -40,7 +47,7 @@ class orderController extends Controller
                 //Verificar stock antes de actualizar
                 $product = Product::where('id', $cart['id'])->first();
                 if($product->stock < $cart['quantity']){
-                    throw new \Exception('No hay suficiente stock para el producto: ' . $product->name);
+                    return response()->json(['message' => 'No hay suficiente stock para el producto '.$product->name], 500);
                 }
                 //Actualizar stock
                 $product->stock = $product->stock - $cart['quantity'];
@@ -52,7 +59,7 @@ class orderController extends Controller
             $Payments = new Payments();
             $Payments->cart_id = $Purchase_Cart->id;
             $Payments->payment_method = $request->paymentMethod;
-            $Payments->transaction_id = $request->transactionNumber;
+            $Payments->transaction_id = $Transaccion_id;
             $Payments->amount = $request->total;
             if($request->paymentMethod == 'paypal'){
                 $Payments->currency = 'USD';
