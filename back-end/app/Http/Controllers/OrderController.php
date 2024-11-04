@@ -102,6 +102,33 @@ class orderController extends Controller
         }
     }
 
+    public function getAllOrders()
+    {
+        // Obtener todos los registros de ShipmentsTracking con su relación a Shipments
+        $trackingRecords = ShipmentsTracking::with('shipment')->get();
+    
+        // Crear un array para almacenar los datos completos de cada pedido
+        $orders = $trackingRecords->map(function($tracking) {
+            return [
+                'tracking_number' => $tracking->tracking_number,
+                'status' => $tracking->status,
+                'update_details' => $tracking->update_details,
+                'updated_at' => $tracking->updated_at,
+                'shipment' => $tracking->shipment ? [
+                    'address' => $tracking->shipment->address,
+                    'city' => $tracking->shipment->city,
+                    'postal_code' => $tracking->shipment->postal_code,
+                    'country' => $tracking->shipment->country,
+                    'state' => $tracking->shipment->state,
+                    'created_at' => $tracking->shipment->created_at,
+                ] : null,
+            ];
+        });
+    
+        return response()->json($orders, 200);
+    }
+    
+
     public function get_orders(){
         $Payments = Payments::where('user_id', Auth::user()->id)->get();
         $Shipments = Shipments::where('user_id', Auth::user()->id)->get();
@@ -113,5 +140,91 @@ class orderController extends Controller
         ];
         return response()->json($Data, 200);
     }
+   
+   
+    public function trackOrder($trackingNumber)
+    {
+        $tracking = ShipmentsTracking::where('tracking_number', $trackingNumber)->first();
     
+        if (!$tracking) {
+            return response()->json(['error' => 'No se pudo encontrar el pedido. Verifique el número de guía.'], 404);
+        }
+    
+        $shipment = Shipments::where('id', $tracking->shipment_id)->first();
+    
+        if (!$shipment) {
+            return response()->json(['error' => 'No se pudo encontrar el envío asociado.'], 404);
+        }
+    
+        $payment = Payments::where('cart_id', $shipment->cart_id)->first();
+    
+        // Estructurar la respuesta con los datos necesarios
+        $orderDetails = [
+            'tracking' => [
+                'tracking_number' => $tracking->tracking_number,
+                'status' => $tracking->status,
+                'update_details' => $tracking->update_details,
+                'updated_at' => $tracking->updated_at
+            ],
+            'shipment' => [
+                'address' => $shipment->address,
+                'city' => $shipment->city,
+                'postal_code' => $shipment->postal_code,
+                'country' => $shipment->country,
+                'state' => $shipment->state,
+                'created_at' => $shipment->created_at
+            ],
+            'payment' => $payment ? [
+                'payment_method' => $payment->payment_method,
+                'amount' => $payment->amount,
+                'status' => $payment->status,
+                'currency' => $payment->currency,
+                'transaction_id' => $payment->transaction_id
+            ] : null
+        ];
+    
+        return response()->json($orderDetails, 200);
+    }
+
+    public function updateStatus(Request $request, $trackingNumber)
+    {
+        $request->validate([
+            'status' => 'required|string',
+        ]);
+
+        $tracking = ShipmentsTracking::where('tracking_number', $trackingNumber)->first();
+
+        if (!$tracking) {
+            return response()->json(['error' => 'Pedido no encontrado'], 404);
+        }
+
+        $tracking->status = $request->status;
+        $tracking->update_details = 'Estado actualizado a ' . $request->status;
+        $tracking->save();
+
+        return response()->json([
+            'message' => 'Estado del pedido actualizado exitosamente',
+            'order' => $tracking
+        ], 200);
+    }
+    public function cancelOrder($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            $tracking = ShipmentsTracking::where('tracking_number', $id)->first();
+
+            if (!$tracking) {
+                return response()->json(['error' => 'Pedido no encontrado'], 404);
+            }
+            $tracking->delete();
+
+            DB::commit();
+
+            return response()->json(['message' => 'Pedido cancelado exitosamente'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => 'Error al cancelar el pedido', 'message' => $e->getMessage()], 500);
+        }
+    }
 }

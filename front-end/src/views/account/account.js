@@ -121,7 +121,7 @@ export default function Account() {
     const { password_confirmation, ...dataToSend } = registrar;
 
     try {
-      const response = await fetch(`${apiUrl}/register`, {
+      const response = await fetch(`${apiUrl}/client/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

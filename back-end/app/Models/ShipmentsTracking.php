@@ -15,5 +15,8 @@ class ShipmentsTracking extends Model
         'status',
         'update_details'
     ];
-    // Relación con la categoría de producto
+    public function shipment()
+    {
+        return $this->belongsTo(Shipments::class, 'shipment_id');
+    }
 }

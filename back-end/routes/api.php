@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\OrderController;
 
 Route::post('/login', 'App\Http\Controllers\loginController@login')->name('login');
 
@@ -11,6 +12,10 @@ Route::prefix('client')->group(function () {
 Route::get('/products', 'App\Http\Controllers\ProductController@index')->name('products.index');
 Route::get('/categories', 'App\Http\Controllers\ProductCategoryController@index')->name('categories.index');
 Route::get('/coupons', 'App\Http\Controllers\CouponController@index')->name('coupons.index');
+
+Route::get('/track-order/{trackingNumber}', 'App\Http\Controllers\OrderController@trackOrder')->name('order.track');
+Route::delete('/orders/{id}', 'App\Http\Controllers\OrderController@cancelOrder')->name('orders.cancel');
+
 
 Route::middleware('auth:sanctum')->group(function () {
 
@@ -30,6 +35,9 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::post('/orders', 'App\Http\Controllers\OrderController@store')->name('order.store');
     Route::get('/orders', 'App\Http\Controllers\OrderController@get_orders')->name('order.get_orders');
+    
+
+
 
     Route::middleware('admin')->group(function () {
 
@@ -62,5 +70,9 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', 'App\Http\Controllers\RolesController@index')->name('roles.index');
             Route::post('/', 'App\Http\Controllers\RolesController@store')->name('roles.store');
         });
+        
     });
 });
+Route::get('/all-orders', 'App\Http\Controllers\OrderController@getAllOrders')->name('orders.all');
+Route::post('/change-status/{trackingNumber}', 'App\Http\Controllers\OrderController@updateStatus')->name('orders.change_status');
+

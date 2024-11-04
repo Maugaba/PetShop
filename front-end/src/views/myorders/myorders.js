@@ -4,7 +4,7 @@ import { Package } from 'lucide-react';
 import axios from 'axios';
 import apiUrl from '../../api/apiUrl';
 
-const OrderCard = ({ order }) => {
+const OrderCard = ({ order, onCancel }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'Entregado':
@@ -25,23 +25,27 @@ const OrderCard = ({ order }) => {
           </div>
           <div className="flex-1">
             <p className="font-medium text-gray-900">Pedido #{order.id || 'N/A'}</p>
-            <p className="text-gray-600">
-              {order.details || 'Sin detalles'}
-            </p>
-            <p className="text-sm text-gray-500">
-              Total Q {order.amount || '0'}
-            </p>
+            <p className="text-gray-600">{order.details || 'Sin detalles'}</p>
+            <p className="text-sm text-gray-500">Total Q {order.amount || '0'}</p>
             <p className={`text-sm font-medium ${getStatusColor(order.status)}`}>
               {order.status || 'Pendiente'}
             </p>
           </div>
         </div>
-        <Link 
-          to={`/tracking/${order.id}`} 
-          className="btn btn-outline-dark px-4 py-2 rounded hover:bg-gray-100"
-        >
-          Ver seguimiento
-        </Link>
+        <div>
+          <Link 
+            to={`/order-tracking/${order.id}`} 
+            className="btn btn-outline-dark px-4 py-2 rounded hover:bg-gray-100"
+          >
+            Ver seguimiento
+          </Link>
+          <button
+            onClick={() => onCancel(order.id)}
+            className="btn btn-outline-danger px-4 py-2 rounded hover:bg-red-100 ml-2"
+          >
+            Cancelar
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -53,33 +57,46 @@ const OrderList = () => {
 
   useEffect(() => {
     const fetchOrders = async () => {
-        try {
-          const response = await axios.get(`${apiUrl}/orders`, {
-            headers: {
-              'Content-Type': 'application/json',
-              'Accept': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
-            },
-          });
-      
-          // Mapea los datos de ShipmentsTracking y Payments en un array de objetos orderData
-          const ordersData = response.data.ShipmentsTracking.map((shipment, index) => ({
-            id: shipment.tracking_number,
-            details: shipment.update_details,
-            amount: response.data.Payments[index]?.amount || 0, // Manejar el caso en el que no haya Payment correspondiente
-            status: shipment.status
-          }));
-      
-          setOrders(ordersData);
-        } catch (error) {
-          setError('Error al cargar los pedidos. Por favor, intenta nuevamente.');
-          console.error('Error fetching orders:', error);
-        }
-      };
-      
-      fetchOrders();
+      try {
+        const response = await axios.get(`${apiUrl}/orders`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          },
+        });
 
-    }, []);
+        const ordersData = response.data.ShipmentsTracking.map((shipment, index) => ({
+          id: shipment.tracking_number,
+          details: shipment.update_details,
+          amount: response.data.Payments[index]?.amount || 0,
+          status: shipment.status,
+        }));
+
+        setOrders(ordersData);
+      } catch (error) {
+        setError('Error al cargar los pedidos. Por favor, intenta nuevamente.');
+        console.error('Error fetching orders:', error);
+      }
+    };
+
+    fetchOrders();
+  }, []);
+
+  const handleCancelOrder = async (orderId) => {
+    try {
+      await axios.delete(`${apiUrl}/orders/${orderId}`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+        },
+      });
+      // Elimina el pedido de la lista local
+      setOrders((prevOrders) => prevOrders.filter((order) => order.id !== orderId));
+    } catch (error) {
+      setError('No se pudo cancelar el pedido. Intenta nuevamente.');
+      console.error('Error al cancelar el pedido:', error);
+    }
+  };
 
   return (
     <div>
@@ -106,7 +123,9 @@ const OrderList = () => {
               </div>
               <div className="space-y-4">
                 {orders && orders.length > 0 ? (
-                  orders.map(order => <OrderCard key={order.id} order={order} />)
+                  orders.map(order => (
+                    <OrderCard key={order.id} order={order} onCancel={handleCancelOrder} />
+                  ))
                 ) : (
                   <p>No hay pedidos para mostrar. ({JSON.stringify(orders)})</p>
                 )}

@@ -1,16 +1,21 @@
-import React, { useEffect, useState } from 'react';
+// CodeTracking.js
+import React, { useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faTruck, faWarehouse, faTruckLoading, faBoxOpen } from '@fortawesome/free-solid-svg-icons';
 
-const OrderTracking = () => {
-    const { trackingNumber } = useParams(); // Obtén el número de seguimiento desde la URL
+const CodeTracking = () => {
+    const [trackingNumber, setTrackingNumber] = useState('');
     const [orderDetails, setOrderDetails] = useState(null);
     const [error, setError] = useState('');
 
-    useEffect(() => {
-        const fetchOrderDetails = async () => {
+    const handleInputChange = (e) => {
+        setTrackingNumber(e.target.value);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (trackingNumber) {
             try {
                 const response = await axios.get(`/api/track-order/${trackingNumber}`);
                 setOrderDetails(response.data);
@@ -19,10 +24,8 @@ const OrderTracking = () => {
                 setOrderDetails(null);
                 setError('No se pudo encontrar el pedido. Verifique el número de guía.');
             }
-        };
-
-        fetchOrderDetails();
-    }, [trackingNumber]);
+        }
+    };
 
     const getStatusIcon = (status, isActive) => {
         const iconProps = {
@@ -70,6 +73,29 @@ const OrderTracking = () => {
                     color: #333;
                 }
 
+                input {
+                    width: 100%;
+                    padding: 10px;
+                    margin-bottom: 10px;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                }
+
+                button {
+                    width: 100%;
+                    padding: 10px;
+                    border: none;
+                    border-radius: 5px;
+                    background-color: #007bff;
+                    color: white;
+                    cursor: pointer;
+                    font-size: 16px;
+                }
+
+                button:hover {
+                    background-color: #0056b3;
+                }
+
                 .error {
                     color: red;
                     text-align: center;
@@ -100,25 +126,21 @@ const OrderTracking = () => {
                     color: #4caf50; /* Verde para el estado activo */
                     font-weight: bold;
                 }
-
-                .back-button {
-                    background-color: #007bff;
-                    color: white;
-                    text-decoration: none;
-                    display: inline-block;
-                    padding: 10px 15px;
-                    border-radius: 5px;
-                    margin-top: 15px;
-                    text-align: center;
-                }
-
-                .back-button:hover {
-                    background-color: #0056b3;
-                }
             `}</style>
 
-            <h2>Seguimiento De Pedido</h2>
+            <h2>Ingresar Número de Seguimiento</h2>
+            <form onSubmit={handleSubmit}>
+                <input
+                    type="text"
+                    value={trackingNumber}
+                    onChange={handleInputChange}
+                    placeholder="Número de guía"
+                />
+                <button type="submit">Ver Estado</button>
+            </form>
+
             {error && <div className="error">{error}</div>}
+            
             {orderDetails && (
                 <div className="order-details">
                     <h3>Detalles del Pedido</h3>
@@ -141,9 +163,8 @@ const OrderTracking = () => {
                     </div>
                 </div>
             )}
-            <a href="/myorders" className="back-button">Volver a Mis Pedidos</a>
         </div>
     );
 };
 
-export default OrderTracking;
+export default CodeTracking;

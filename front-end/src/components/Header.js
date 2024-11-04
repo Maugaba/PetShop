@@ -49,7 +49,7 @@ const Header = () => {
                       <CartNumber />
                     </li>
                     <li className="me-3">
-                      <Link to="/order-tracking" className="mx-3">
+                      <Link to="/code-tracking" className="mx-3">
                         <Icon icon="mdi:truck" className="fs-4" /> {/* Truck Icon */}
                       </Link>
                     </li>
