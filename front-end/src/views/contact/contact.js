@@ -51,7 +51,7 @@ const ContactUs = () => {
                   <div className="content-box">
                     <h4 className="card-title">Gestión</h4>
                     <div className="contact-address pt-3">
-                      <p>730 Glenstone Ave 65802, Springfield, EE. UU.</p>
+                      <p>15 Avenida 500-540, Quetzaltenango, Guatemala.</p>
                     </div>
                     <div className="contact-number">
                       <p>
