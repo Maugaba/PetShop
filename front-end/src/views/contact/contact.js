@@ -27,7 +27,7 @@ const ContactUs = () => {
                   <div className="content-box text-dark pe-4 mb-5">
                     <h4 className="card-title">Oficina</h4>
                     <div className="contact-address pt-3">
-                      <p>3ra Avenida, 4-65 Zona 1, Quetzaltenango, Guatemala.</p>
+                      <p>28 Avenida, Zona 1, Quetzaltenango, Guatemala.</p>
                     </div>
                     <div className="contact-number">
                     <p>
@@ -51,7 +51,7 @@ const ContactUs = () => {
                   <div className="content-box">
                     <h4 className="card-title">Gestión</h4>
                     <div className="contact-address pt-3">
-                      <p>730 Glenstone Ave 65802, Springfield, EE. UU.</p>
+                      <p>15 Avenida 500-540, Quetzaltenango, Guatemala.</p>
                     </div>
                     <div className="contact-number">
                       <p>
