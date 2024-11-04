@@ -20,6 +20,7 @@ class CreateShipmentsTable extends Migration
             $table->string('city');
             $table->string('postal_code');
             $table->string('country');
+            $table->integer('user_id'); // ID del usuario que realizó el pago
             $table->string('state')->default('pending');
             $table->timestamps();
         });

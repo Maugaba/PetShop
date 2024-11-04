@@ -19,6 +19,7 @@ class CreateShipmentTrackingTable extends Migration
             $table->string('tracking_number');
             $table->string('status');
             $table->text('update_details')->nullable();
+            $table->integer('user_id'); // ID del usuario que realizó el pago
             $table->timestamps();
         });
     }
