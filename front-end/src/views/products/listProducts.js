@@ -47,6 +47,10 @@ const ListProducts = () => {
           if (product.discount && product.discount > 0) {
             product.finalPrice = price -  product.discount;
           }
+          else
+          {
+            product.finalPrice = price;
+          }
 
           return { ...product, price: price.toFixed(2), finalPrice: finalPrice.toFixed(2) };
         });

@@ -74,7 +74,9 @@ class ProductController extends Controller
         $product->videos = $videosConcatenated; // Guardar la cadena de nombres de videos
         $product->specifications = $request->specifications;
         $product->price = $request->price;
-        $product->discount = $request->discount;
+        if ($request->discount) {
+            $product->discount = $request->discount;
+        }
         $product->stock = $request->stock;
         $product->state = 1; // Por defecto, el producto se crea activo
         $product->product_categorie_id = $request->category;
