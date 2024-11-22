@@ -3,8 +3,8 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faTruck, faWarehouse, faTruckLoading, faBoxOpen } from '@fortawesome/free-solid-svg-icons';
-
-axios.defaults.baseURL = 'http://localhost:8000';
+import  { apiphotos } from '../../api/apiUrl';
+axios.defaults.baseURL =apiphotos;
 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 
 const OrderTrackingAdmin = () => {

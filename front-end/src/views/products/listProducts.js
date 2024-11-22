@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import apiUrl from '../../api/apiUrl';
 import { useCart } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
-
+import  { apiphotos } from '../../api/apiUrl';
 const BannerSection = () => {
   return (
     <section id="banner" className="py-3" style={{ background: '#F9F3EC' }}>
@@ -41,6 +41,7 @@ const ListProducts = () => {
     fetch(apiUrl + '/products')
       .then(response => response.json())
       .then(data => {
+        console.log(apiphotos);
         const updatedProducts = data.map(product => {
           const price = parseFloat(product.price) || 0;
           let finalPrice = price;
@@ -155,7 +156,7 @@ const ListProducts = () => {
                     >
                       <Link to={`/product/${product.id}`}>
                         <img
-                          src={`http://localhost:8000/images/${product.images}`}
+                          src={`${apiphotos+product.images}`}
                           className="img-fluid"
                           alt={product.name}
                           style={{
