@@ -4,6 +4,7 @@ import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faTruck, faWarehouse, faTruckLoading, faBoxOpen } from '@fortawesome/free-solid-svg-icons';
 import  { apiphotos } from '../../api/apiUrl';
+import apiUrl from '../../api/apiUrl';
 axios.defaults.baseURL =apiphotos;
 axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
 
@@ -16,7 +17,7 @@ const OrderTrackingAdmin = () => {
 
     const fetchOrders = async () => {
         try {
-            const response = await axios.get('/api/all-orders');
+            const response = await axios.get(apiUrl+'/orders');
             setOrders(response.data);
         } catch (error) {
             console.error("Error al obtener los pedidos:", error);
@@ -26,7 +27,7 @@ const OrderTrackingAdmin = () => {
 
     const handleStatusChange = async (trackingNumber, newStatus) => {
         try {
-            const response = await axios.post(`/api/change-status/${trackingNumber}`, { status: newStatus });
+            const response = await axios.put(`/api/update-order-status/${trackingNumber}`, { status: newStatus });
             Swal.fire('Actualizado', 'El estado del pedido ha sido actualizado.', 'success');
             fetchOrders(); // Refresca la lista de pedidos después de la actualización
         } catch (error) {

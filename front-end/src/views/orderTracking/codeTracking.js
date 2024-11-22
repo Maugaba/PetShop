@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faTruck, faWarehouse, faTruckLoading, faBoxOpen } from '@fortawesome/free-solid-svg-icons';
+import apiUrl from '../../api/apiUrl';
 
 const CodeTracking = () => {
     const [trackingNumber, setTrackingNumber] = useState('');
@@ -17,7 +18,8 @@ const CodeTracking = () => {
         e.preventDefault();
         if (trackingNumber) {
             try {
-                const response = await axios.get(`/api/track-order/${trackingNumber}`);
+                console.log('apiUrl:', apiUrl); // Debería mostrar "https://backend-petshop.onrender.com/api"
+                const response = await axios.get(apiUrl+`/track-order/${trackingNumber}`);
                 setOrderDetails(response.data);
                 setError('');
             } catch (err) {
@@ -34,7 +36,7 @@ const CodeTracking = () => {
                 opacity: isActive ? 1 : 0.5,
                 fontSize: '24px'
             }
-        };
+        };  
 
         switch (status) {
             case 'Pendiente de Recolectar':

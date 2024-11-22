@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClock, faTruck, faWarehouse, faTruckLoading, faBoxOpen } from '@fortawesome/free-solid-svg-icons';
+import apiUrl from '../../api/apiUrl';
+
 
 const OrderTracking = () => {
     const { trackingNumber } = useParams(); // Obtén el número de seguimiento desde la URL
@@ -12,7 +14,7 @@ const OrderTracking = () => {
     useEffect(() => {
         const fetchOrderDetails = async () => {
             try {
-                const response = await axios.get(`/api/track-order/${trackingNumber}`);
+                const response = await axios.get(apiUrl+`/track-order/${trackingNumber}`);
                 setOrderDetails(response.data);
                 setError('');
             } catch (err) {
