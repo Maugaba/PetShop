@@ -101,7 +101,7 @@ class OrderController extends Controller
             
 
             DB::commit();
-            return response()->json(['message' => 'Orden creada correctamente'], 200);
+            return response()->json(['message' => 'Orden creada correctamente', 'tracking_number' => $ShipmentsTracking->tracking_number], 200);
         }
         catch(\Exception $e){
             DB::rollBack();
